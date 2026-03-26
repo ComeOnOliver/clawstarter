@@ -101,7 +101,7 @@ export async function POST(req: NextRequest) {
 
     const s3 = getS3Client();
     const uploadUrl = await getSignedUrl(s3, command, { expiresIn: PRESIGN_EXPIRES });
-    const publicUrl = `https://${BUCKET}.s3.${REGION}.amazonaws.com/${key}`;
+    const publicUrl = `https://assets.clawstarter.app/assets/${key}`;
 
     return NextResponse.json({
       upload_url: uploadUrl,

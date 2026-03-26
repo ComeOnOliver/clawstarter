@@ -8,6 +8,11 @@ const nextConfig: NextConfig = {
         hostname: 'agentstarter-uploads.s3.us-east-1.amazonaws.com',
         pathname: '/uploads/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'assets.clawstarter.app',
+        pathname: '/assets/**',
+      },
     ],
   },
   async rewrites() {
