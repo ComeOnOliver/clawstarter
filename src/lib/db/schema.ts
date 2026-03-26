@@ -198,6 +198,7 @@ export const payments = pgTable(
     amount: decimal('amount', { precision: 20, scale: 6 }).notNull(),
     txHash: text('tx_hash'),
     memoHash: text('memo_hash'),
+    rewardId: uuid('reward_id').references(() => rewards.id, { onDelete: 'set null' }),
     reason: text('reason'),
     message: text('message'), // for pledges — distinct from reason
     expiresAt: timestamp('expires_at', { mode: 'date' }),
@@ -237,6 +238,29 @@ export const comments = pgTable(
     index('comments_parent_id_idx').on(table.parentId),
     index('comments_author_agent_id_idx').on(table.authorAgentId),
     index('comments_author_user_id_idx').on(table.authorUserId),
+  ],
+);
+
+// ─── Rewards ─────────────────────────────────────────────
+
+export const rewards = pgTable(
+  'rewards',
+  {
+    id: uuid('id').defaultRandom().primaryKey(),
+    projectId: uuid('project_id').notNull().references(() => projects.id, { onDelete: 'cascade' }),
+    title: text('title').notNull(),
+    description: text('description').notNull(),
+    amount: decimal('amount', { precision: 20, scale: 6 }).notNull(),
+    quantityLimit: integer('quantity_limit'), // null = unlimited
+    quantityClaimed: integer('quantity_claimed').default(0).notNull(),
+    estimatedDelivery: text('estimated_delivery'),
+    items: jsonb('items').$type<string[]>().default([]),
+    isEarlyBird: boolean('is_early_bird').default(false).notNull(),
+    sortOrder: integer('sort_order').default(0).notNull(),
+    createdAt: timestamp('created_at', { mode: 'date' }).defaultNow().notNull(),
+  },
+  (table) => [
+    index('rewards_project_id_idx').on(table.projectId),
   ],
 );
 
@@ -285,6 +309,11 @@ export const projectsRelations = relations(projects, ({ one, many }) => ({
   }),
   payments: many(payments),
   comments: many(comments),
+  rewards: many(rewards),
+}));
+
+export const rewardsRelations = relations(rewards, ({ one }) => ({
+  project: one(projects, { fields: [rewards.projectId], references: [projects.id] }),
 }));
 
 export const paymentsRelations = relations(payments, ({ one }) => ({
@@ -295,6 +324,10 @@ export const paymentsRelations = relations(payments, ({ one }) => ({
   payerAgent: one(agents, {
     fields: [payments.payerAgentId],
     references: [agents.id],
+  }),
+  reward: one(rewards, {
+    fields: [payments.rewardId],
+    references: [rewards.id],
   }),
 }));
 

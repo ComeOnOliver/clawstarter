@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db, eq, and, sql } from '@/lib/db/client';
-import { payments, projects } from '@/lib/db/schema';
+import { payments, projects, rewards } from '@/lib/db/schema';
 import { requireAgent } from '@/lib/agent-auth';
 
 const TX_HASH_REGEX = /^0x[a-fA-F0-9]{64}$/;
@@ -147,6 +147,16 @@ export async function POST(
           updatedAt: new Date(),
         })
         .where(eq(projects.id, updated.projectId));
+    }
+
+    // Increment reward quantity_claimed if reward was selected
+    if (updated.rewardId) {
+      await tx
+        .update(rewards)
+        .set({
+          quantityClaimed: sql`${rewards.quantityClaimed} + 1`,
+        })
+        .where(eq(rewards.id, updated.rewardId));
     }
 
     return updated;

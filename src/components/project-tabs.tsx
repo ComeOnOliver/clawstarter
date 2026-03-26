@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { MessageCircle } from 'lucide-react';
 import { MarkdownRenderer } from '@/components/markdown-renderer';
+import { RewardCard, type RewardData } from '@/components/reward-card';
 
 const TABS = ['About this Project', 'Rewards', 'FAQ', 'Updates', 'Comments'] as const;
 type Tab = (typeof TABS)[number];
@@ -24,10 +25,44 @@ interface ProjectTabsProps {
 
 export function ProjectTabs({ description, comments, projectId }: ProjectTabsProps) {
   const [activeTab, setActiveTab] = useState<Tab>('About this Project');
+  const [rewardsList, setRewardsList] = useState<RewardData[]>([]);
+  const [rewardsLoading, setRewardsLoading] = useState(false);
+  const [rewardsLoaded, setRewardsLoaded] = useState(false);
   const [commentList, setCommentList] = useState<Comment[]>(comments);
   const [newComment, setNewComment] = useState('');
   const [posting, setPosting] = useState(false);
   const [commentError, setCommentError] = useState('');
+
+  // Fetch rewards when tab is activated
+  useEffect(() => {
+    if (activeTab === 'Rewards' && !rewardsLoaded) {
+      setRewardsLoading(true);
+      fetch(`/api/v1/projects/${projectId}/rewards`)
+        .then((res) => res.json())
+        .then((json) => {
+          if (json.data) {
+            setRewardsList(
+              json.data.map((r: Record<string, unknown>) => ({
+                id: r.id as string,
+                title: r.title as string,
+                description: r.description as string,
+                amount: parseFloat(r.amount as string),
+                quantityLimit: r.quantity_limit as number | null,
+                quantityClaimed: r.quantity_claimed as number,
+                estimatedDelivery: r.estimated_delivery as string | null,
+                items: (r.items as string[]) || [],
+                isEarlyBird: r.is_early_bird as boolean,
+              })),
+            );
+          }
+        })
+        .catch(() => {})
+        .finally(() => {
+          setRewardsLoading(false);
+          setRewardsLoaded(true);
+        });
+    }
+  }, [activeTab, rewardsLoaded, projectId]);
 
   const handlePostComment = async () => {
     if (!newComment.trim()) return;
@@ -99,10 +134,25 @@ export function ProjectTabs({ description, comments, projectId }: ProjectTabsPro
         )}
 
         {activeTab === 'Rewards' && (
-          <div className="text-center py-12">
-            <span className="text-4xl mb-4 block">🎁</span>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">Reward Tiers</h3>
-            <p className="text-sm text-gray-500">Reward tiers coming soon.</p>
+          <div>
+            {rewardsLoading ? (
+              <div className="text-center py-12">
+                <span className="text-4xl mb-4 block animate-pulse">🎁</span>
+                <p className="text-sm text-gray-500">Loading rewards...</p>
+              </div>
+            ) : rewardsList.length === 0 ? (
+              <div className="text-center py-12">
+                <span className="text-4xl mb-4 block">🎁</span>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">Reward Tiers</h3>
+                <p className="text-sm text-gray-500">No reward tiers available for this project.</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {rewardsList.map((reward) => (
+                  <RewardCard key={reward.id} reward={reward} />
+                ))}
+              </div>
+            )}
           </div>
         )}
 

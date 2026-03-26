@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'node:crypto';
-import { db, eq } from '@/lib/db/client';
-import { payments, projects } from '@/lib/db/schema';
+import { db, eq, and, sql } from '@/lib/db/client';
+import { payments, projects, rewards } from '@/lib/db/schema';
 import { fundProjectSchema } from '@/lib/shared/validators';
 import { CONFIG } from '@/lib/shared/config';
 import { requireAgent } from '@/lib/agent-auth';
@@ -65,6 +65,41 @@ export async function POST(
     );
   }
 
+  // Validate optional reward_id
+  const rewardId = (body as Record<string, unknown>).reward_id as string | undefined;
+  let selectedReward: { id: string; amount: string; quantityLimit: number | null; quantityClaimed: number } | null = null;
+
+  if (rewardId) {
+    const [reward] = await db
+      .select()
+      .from(rewards)
+      .where(and(eq(rewards.id, rewardId), eq(rewards.projectId, projectId)))
+      .limit(1);
+
+    if (!reward) {
+      return NextResponse.json(
+        { error: { code: 'NOT_FOUND', message: 'Reward not found for this project' } },
+        { status: 404 },
+      );
+    }
+
+    if (parsed.data.amount < parseFloat(reward.amount)) {
+      return NextResponse.json(
+        { error: { code: 'VALIDATION_ERROR', message: `Amount must be at least ${reward.amount} for this reward tier` } },
+        { status: 400 },
+      );
+    }
+
+    if (reward.quantityLimit !== null && reward.quantityClaimed >= reward.quantityLimit) {
+      return NextResponse.json(
+        { error: { code: 'BAD_REQUEST', message: 'This reward tier is sold out' } },
+        { status: 400 },
+      );
+    }
+
+    selectedReward = reward;
+  }
+
   // Generate memo hash for on-chain payment identification
   const memoHash =
     '0x' +
@@ -86,6 +121,7 @@ export async function POST(
       amount: parsed.data.amount.toString(),
       memoHash,
       reason: parsed.data.reason ?? null,
+      rewardId: selectedReward?.id ?? null,
       expiresAt,
     })
     .returning();

@@ -5,10 +5,11 @@ import {
   DollarSign,
   ExternalLink,
 } from 'lucide-react';
-import { getProjectBySlug } from '@/lib/db-queries';
+import { getProjectBySlug, getProjectRewards } from '@/lib/db-queries';
 import { notFound } from 'next/navigation';
 import { ProjectTabs } from '@/components/project-tabs';
 import { MarkdownRenderer } from '@/components/markdown-renderer';
+import { RewardCard, type RewardData } from '@/components/reward-card';
 
 export const dynamicParams = true;
 export const dynamic = 'force-dynamic';
@@ -34,6 +35,8 @@ export default async function ProjectDetailPage({
     notFound();
   }
 
+  const projectRewards = await getProjectRewards(project.id);
+
   const daysLeft = Math.max(
     0,
     Math.ceil((new Date(project.fundingDeadline).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
@@ -41,16 +44,16 @@ export default async function ProjectDetailPage({
   const percent = Math.round((project.fundedAmount / project.fundingGoal) * 100);
 
   if (viewBy === 'human') {
-    return <HumanView project={project} id={id} daysLeft={daysLeft} percent={percent} />;
+    return <HumanView project={project} id={id} daysLeft={daysLeft} percent={percent} rewards={projectRewards} />;
   }
 
-  return <AgentView project={project} id={id} daysLeft={daysLeft} percent={percent} />;
+  return <AgentView project={project} id={id} daysLeft={daysLeft} percent={percent} rewards={projectRewards} />;
 }
 
 /* ─── Agent View (default) ─── */
 
-function AgentView({ project, id, daysLeft, percent }: {
-  project: ProjectDetail; id: string; daysLeft: number; percent: number;
+function AgentView({ project, id, daysLeft, percent, rewards }: {
+  project: ProjectDetail; id: string; daysLeft: number; percent: number; rewards: RewardData[];
 }) {
   const statusIcon = { funding: '●', active: '●', completed: '✓', failed: '✗', draft: '○' }[project.status] || '○';
   const statusColor = { funding: 'text-green-400', active: 'text-blue-400', completed: 'text-green-400', failed: 'text-red-400', draft: 'text-gray-500' }[project.status] || 'text-gray-500';
@@ -167,8 +170,8 @@ Twitter:    ${project.agentTwitter || 'n/a'}`
 
 /* ─── Human View ─── */
 
-function HumanView({ project, id, daysLeft, percent }: {
-  project: ProjectDetail; id: string; daysLeft: number; percent: number;
+function HumanView({ project, id, daysLeft, percent, rewards }: {
+  project: ProjectDetail; id: string; daysLeft: number; percent: number; rewards: RewardData[];
 }) {
   return (
     <div className="mx-auto max-w-7xl px-6 py-12">
@@ -243,6 +246,18 @@ function HumanView({ project, id, daysLeft, percent }: {
 
         {/* Sidebar */}
         <div className="space-y-6">
+          {/* Rewards Section */}
+          {rewards.length > 0 && (
+            <div>
+              <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">Reward Tiers</h3>
+              <div className="space-y-4">
+                {rewards.map((reward) => (
+                  <RewardCard key={reward.id} reward={reward} />
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Creator Card */}
           <div className="rounded-xl bg-white p-6 shadow-md lg:sticky lg:top-24">
             <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">Created by Agent</h3>

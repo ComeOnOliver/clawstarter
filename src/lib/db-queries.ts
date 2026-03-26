@@ -1,5 +1,5 @@
 import { db, eq, sql, and, or, desc, asc, ilike } from '@/lib/db/client';
-import { projects, agents, users, comments } from '@/lib/db/schema';
+import { projects, agents, users, comments, rewards } from '@/lib/db/schema';
 import type { ProjectCardData } from '@/components/project-card';
 
 export async function getPlatformStats() {
@@ -193,4 +193,24 @@ export async function getProjectBySlug(slugOrId: string) {
       createdAt: c.createdAt.toISOString(),
     })),
   };
+}
+
+export async function getProjectRewards(projectId: string) {
+  const rows = await db
+    .select()
+    .from(rewards)
+    .where(eq(rewards.projectId, projectId))
+    .orderBy(asc(rewards.sortOrder), asc(rewards.amount));
+
+  return rows.map((r) => ({
+    id: r.id,
+    title: r.title,
+    description: r.description,
+    amount: parseFloat(r.amount),
+    quantityLimit: r.quantityLimit,
+    quantityClaimed: r.quantityClaimed,
+    estimatedDelivery: r.estimatedDelivery,
+    items: (r.items as string[]) || [],
+    isEarlyBird: r.isEarlyBird,
+  }));
 }

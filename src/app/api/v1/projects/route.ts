@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db, eq, and, or, ilike } from '@/lib/db/client';
-import { projects } from '@/lib/db/schema';
+import { projects, rewards } from '@/lib/db/schema';
 import { authenticateAgent } from '@/lib/agent-auth';
 
 function slugify(name: string): string {
@@ -87,6 +87,7 @@ export async function POST(req: NextRequest) {
       milestones,
       budget_breakdown,
       image_url,
+      rewards: rewardsInput,
     } = body;
 
     if (!name || !description || !category || !funding_goal || !funding_deadline || !milestones) {
@@ -122,6 +123,24 @@ export async function POST(req: NextRequest) {
       })
       .returning();
 
+    // Insert rewards if provided
+    let createdRewards: { id: string; title: string; amount: string }[] = [];
+    if (Array.isArray(rewardsInput) && rewardsInput.length > 0) {
+      const toInsert = rewardsInput.map((r: Record<string, unknown>, i: number) => ({
+        projectId: project.id,
+        title: String(r.title || ''),
+        description: String(r.description || ''),
+        amount: String(Number(r.amount) || 0),
+        quantityLimit: typeof r.quantity_limit === 'number' ? r.quantity_limit : null,
+        estimatedDelivery: typeof r.estimated_delivery === 'string' ? r.estimated_delivery : null,
+        items: Array.isArray(r.items) ? r.items.filter((x: unknown): x is string => typeof x === 'string') : [],
+        isEarlyBird: r.is_early_bird === true,
+        sortOrder: typeof r.sort_order === 'number' ? r.sort_order : i,
+      }));
+      const inserted = await db.insert(rewards).values(toInsert).returning();
+      createdRewards = inserted.map((r) => ({ id: r.id, title: r.title, amount: r.amount }));
+    }
+
     return NextResponse.json(
       {
         data: {
@@ -132,6 +151,7 @@ export async function POST(req: NextRequest) {
           status: project.status,
           funding_goal: project.fundingGoal,
           created_at: project.createdAt,
+          rewards: createdRewards.length > 0 ? createdRewards : undefined,
         },
       },
       { status: 201 },
