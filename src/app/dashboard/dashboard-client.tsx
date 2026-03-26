@@ -359,7 +359,7 @@ export default function DashboardClient({ userId, userEmail, userName, initialPr
               {agentsList.map((agent) => (
                 <div
                   key={agent.id}
-                  className="rounded-xl bg-white shadow-md p-6 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6"
+                  className="rounded-xl bg-white shadow-md p-4 sm:p-6 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6"
                 >
                   <div className="flex items-center gap-4 sm:gap-0">
                     <div className="shrink-0">
@@ -462,7 +462,7 @@ export default function DashboardClient({ userId, userEmail, userName, initialPr
             </div>
 
             {refreshedKey && (
-              <div className="rounded-xl bg-white shadow-md p-6">
+              <div className="rounded-xl bg-white shadow-md p-4 sm:p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">New API Key</h3>
                 <div className="rounded-lg bg-amber-50 shadow-sm p-4">
                   <p className="text-sm text-amber-800 font-medium mb-2">
@@ -482,7 +482,7 @@ export default function DashboardClient({ userId, userEmail, userName, initialPr
                 </div>
                 <Button
                   onClick={() => setRefreshedKey(null)}
-                  className="mt-3 bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:scale-[1.02] active:scale-95 transition-all duration-200 rounded-lg px-4 py-2 text-sm font-medium"
+                  className="mt-3 w-full sm:w-auto bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:scale-[1.02] active:scale-95 transition-all duration-200 rounded-lg px-4 py-2.5 sm:py-2 text-sm font-medium min-h-[44px]"
                 >
                   Done
                 </Button>
@@ -526,7 +526,7 @@ export default function DashboardClient({ userId, userEmail, userName, initialPr
                       Your agent can register itself with one command:
                     </p>
 
-                    <div className="rounded-lg bg-gray-900 p-3 sm:p-4 mb-6 overflow-x-auto -webkit-overflow-scrolling-touch hide-scrollbar">
+                    <div className="rounded-lg bg-gray-900 p-3 sm:p-4 mb-6 overflow-x-auto hide-scrollbar">
                       <pre className="text-xs sm:text-sm text-green-400 font-mono whitespace-pre overflow-x-auto">
 {`curl -X POST https://clawstarter.app/api/v1/agents/register \\
   -H "Content-Type: application/json" \\
@@ -737,25 +737,25 @@ export default function DashboardClient({ userId, userEmail, userName, initialPr
             </div>
 
             {/* Social Links */}
-            <div className="rounded-xl bg-white shadow-md p-6 space-y-4">
+            <div className="rounded-xl bg-white shadow-md p-4 sm:p-6 space-y-4">
               <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider">
                 Social Links
               </h3>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-2">
-                  <Globe className="h-4 w-4 text-gray-400" /> Website
+                  <Globe className="h-4 w-4 text-gray-400 shrink-0" /> Website
                 </label>
                 <input
                   value={websiteUrl}
                   onChange={(e) => setWebsiteUrl(e.target.value)}
                   placeholder="https://yoursite.com"
-                  className="w-full rounded-lg bg-gray-50 shadow-sm px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:outline-none transition-colors"
+                  className="w-full rounded-lg bg-gray-50 shadow-sm px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:outline-none transition-colors min-h-[44px]"
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-2">
                   <svg
-                    className="h-4 w-4 text-gray-400"
+                    className="h-4 w-4 text-gray-400 shrink-0"
                     viewBox="0 0 24 24"
                     fill="currentColor"
                   >
@@ -767,24 +767,24 @@ export default function DashboardClient({ userId, userEmail, userName, initialPr
                   value={githubUrl}
                   onChange={(e) => setGithubUrl(e.target.value)}
                   placeholder="https://github.com/username"
-                  className="w-full rounded-lg bg-gray-50 shadow-sm px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:outline-none transition-colors"
+                  className="w-full rounded-lg bg-gray-50 shadow-sm px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:outline-none transition-colors min-h-[44px]"
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-2">
-                  <Star className="h-4 w-4 text-gray-400" /> Twitter
+                  <Star className="h-4 w-4 text-gray-400 shrink-0" /> Twitter
                 </label>
                 <input
                   value={twitterUrl}
                   onChange={(e) => setTwitterUrl(e.target.value)}
                   placeholder="@handle"
-                  className="w-full rounded-lg bg-gray-50 shadow-sm px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:outline-none transition-colors"
+                  className="w-full rounded-lg bg-gray-50 shadow-sm px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:outline-none transition-colors min-h-[44px]"
                 />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-2">
                   <svg
-                    className="h-4 w-4 text-gray-400"
+                    className="h-4 w-4 text-gray-400 shrink-0"
                     viewBox="0 0 24 24"
                     fill="currentColor"
                   >
@@ -796,27 +796,27 @@ export default function DashboardClient({ userId, userEmail, userName, initialPr
                   value={instagramUrl}
                   onChange={(e) => setInstagramUrl(e.target.value)}
                   placeholder="@handle"
-                  className="w-full rounded-lg bg-gray-50 shadow-sm px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:outline-none transition-colors"
+                  className="w-full rounded-lg bg-gray-50 shadow-sm px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:outline-none transition-colors min-h-[44px]"
                 />
               </div>
             </div>
 
             {/* Save */}
-            <div className="flex items-center gap-3">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
               <Button
                 onClick={handleProfileSave}
                 disabled={profileSaving}
-                className="bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:scale-[1.02] active:scale-95 transition-all duration-200 rounded-lg px-6 py-2.5 text-sm font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full sm:w-auto bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:scale-[1.02] active:scale-95 transition-all duration-200 rounded-lg px-6 py-3 sm:py-2.5 text-sm font-semibold disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px]"
               >
                 {profileSaving ? 'Saving...' : 'Save Changes'}
               </Button>
               {profileSaved && (
-                <span className="text-sm text-green-600 flex items-center gap-1">
+                <span className="text-sm text-green-600 flex items-center justify-center sm:justify-start gap-1">
                   <Check className="h-4 w-4" /> Saved!
                 </span>
               )}
               {profileError && (
-                <span className="text-sm text-red-600">{profileError}</span>
+                <span className="text-sm text-red-600 text-center sm:text-left">{profileError}</span>
               )}
             </div>
           </div>

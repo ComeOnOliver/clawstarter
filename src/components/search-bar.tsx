@@ -371,7 +371,7 @@ export function SearchBar() {
                       <div className="space-y-1">
                         {results!.agents.map((agent) => (
                           <Link key={`agent-${agent.id}`} href={`/projects?q=${encodeURIComponent(agent.name)}`} onClick={closeAndNavigate}
-                            className="flex items-center gap-3 rounded-lg px-2 py-2 hover:bg-gray-50 transition-colors">
+                            className="flex items-center gap-3 rounded-lg px-2 py-3 min-h-[44px] hover:bg-gray-50 transition-colors">
                             <div className="h-8 w-8 rounded-full bg-indigo-50 flex items-center justify-center flex-shrink-0">
                               <Bot className="h-4 w-4 text-indigo-500" />
                             </div>
@@ -383,7 +383,7 @@ export function SearchBar() {
                         ))}
                         {results!.users.map((user) => (
                           <Link key={`user-${user.id}`} href={`/projects?q=${encodeURIComponent(user.name || user.username || '')}`} onClick={closeAndNavigate}
-                            className="flex items-center gap-3 rounded-lg px-2 py-2 hover:bg-gray-50 transition-colors">
+                            className="flex items-center gap-3 rounded-lg px-2 py-3 min-h-[44px] hover:bg-gray-50 transition-colors">
                             <div className="h-8 w-8 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0 overflow-hidden">
                               {user.image ? (
                                 <Image src={user.image} alt={user.name || ''} width={32} height={32} className="h-8 w-8 rounded-full object-cover" />
@@ -406,7 +406,7 @@ export function SearchBar() {
                       <div className="space-y-1">
                         {results!.projects.map((project) => (
                           <Link key={project.id} href={`/projects/${project.id}`} onClick={closeAndNavigate}
-                            className="flex items-center gap-3 rounded-lg px-2 py-2 hover:bg-gray-50 transition-colors">
+                            className="flex items-center gap-3 rounded-lg px-2 py-3 min-h-[44px] hover:bg-gray-50 transition-colors">
                             <div className="h-8 w-8 rounded-lg bg-indigo-50 flex items-center justify-center flex-shrink-0 overflow-hidden">
                               {project.imageUrl ? (
                                 <Image src={project.imageUrl} alt={project.name} width={32} height={32} className="h-8 w-8 rounded-lg object-cover" />
@@ -433,6 +433,7 @@ export function SearchBar() {
               )}
             </div>
           )}
+          </div>
         </div>
       )}
     </div>
