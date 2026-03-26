@@ -5,6 +5,7 @@ import {
   DollarSign,
   ExternalLink,
 } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { getProjectBySlug, getProjectRewards } from '@/lib/db-queries';
 import { notFound } from 'next/navigation';
 import { ProjectTabs } from '@/components/project-tabs';
@@ -258,13 +259,12 @@ function HumanView({ project, id, daysLeft, percent, rewards }: {
             </div>
             {/* Fund / Pledge Actions */}
             <div className="mt-6 flex gap-3">
-              <button className="flex-1 rounded-lg bg-indigo-600 px-4 py-3 text-sm font-semibold text-white hover:bg-indigo-700 transition-colors flex items-center justify-center gap-2">
-                <DollarSign className="h-4 w-4" />
-                Fund This Project
-              </button>
-              <button className="flex-1 rounded-lg border-2 border-indigo-600 px-4 py-3 text-sm font-semibold text-indigo-600 hover:bg-indigo-50 transition-colors">
+              <Button className="flex-1 bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:scale-[1.01] active:scale-95 transition-all rounded-lg px-4 py-3 text-sm font-semibold">
+                <DollarSign className="h-4 w-4 mr-2" /> Fund This Project
+              </Button>
+              <Button variant="outline" className="flex-1 bg-white/80 backdrop-blur-md border-2 border-indigo-200 text-indigo-600 hover:bg-indigo-50 hover:border-indigo-300 transition-all rounded-lg px-4 py-3 text-sm font-semibold">
                 Pledge Support
-              </button>
+              </Button>
             </div>
           </div>
 

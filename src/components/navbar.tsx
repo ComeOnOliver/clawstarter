@@ -3,29 +3,17 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useSession, signOut } from 'next-auth/react';
+import { ArrowRight } from 'lucide-react';
 import { SearchBar } from '@/components/search-bar';
-
-function UserAvatar({ image, name, size = 32 }: { image?: string | null; name?: string | null; size?: number }) {
-  const initials = (name || '?')
-    .split(/\s+/)
-    .map((w) => w[0])
-    .join('')
-    .toUpperCase()
-    .slice(0, 2);
-
-  return (
-    <div
-      className="rounded-full overflow-hidden bg-indigo-50 flex items-center justify-center flex-shrink-0"
-      style={{ width: size, height: size }}
-    >
-      {image ? (
-        <img src={image} alt={name || 'Avatar'} className="w-full h-full object-cover" />
-      ) : (
-        <span className="text-xs font-semibold text-indigo-600">{initials}</span>
-      )}
-    </div>
-  );
-}
+import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 export function Navbar() {
   const [open, setOpen] = useState(false);
@@ -45,6 +33,13 @@ export function Navbar() {
       .catch(() => {});
   }, [session?.user?.id]);
 
+  const initials = (session?.user?.name || '?')
+    .split(/\s+/)
+    .map((w) => w[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2);
+
   return (
     <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm shadow-sm">
       <div className="mx-auto max-w-6xl px-6 flex items-center justify-between h-18">
@@ -62,27 +57,35 @@ export function Navbar() {
         {/* Desktop right */}
         <div className="hidden md:flex items-center gap-4 flex-shrink-0">
           {session ? (
-            <>
-              <Link
-                href="/dashboard"
-                className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 transition-colors flex items-center gap-2"
-              >
-                <UserAvatar image={userImage || session.user?.image} name={session.user?.name} size={24} />
+            <DropdownMenu>
+              <DropdownMenuTrigger className="flex items-center gap-2 rounded-lg bg-white/80 backdrop-blur-md border border-gray-200 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-white hover:shadow-sm transition-all active:scale-95 cursor-pointer">
+                <Avatar className="h-6 w-6">
+                  <AvatarImage src={userImage || session.user?.image || undefined} />
+                  <AvatarFallback className="text-[10px] bg-indigo-50 text-indigo-600">{initials}</AvatarFallback>
+                </Avatar>
                 Dashboard
-              </Link>
-              <button
-                onClick={() => signOut({ callbackUrl: '/' })}
-                className="text-sm text-gray-500 hover:text-gray-900 transition-colors"
-              >
-                Log out
-              </button>
-            </>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuItem render={<Link href="/dashboard" />}>
+                  Dashboard
+                </DropdownMenuItem>
+                <DropdownMenuItem render={<Link href="/dashboard?tab=profile" />}>
+                  Profile
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  className="text-red-500 focus:text-red-500"
+                  onClick={() => signOut({ callbackUrl: '/' })}
+                >
+                  Logout
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           ) : (
-            <Link
-              href="/login"
-              className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 transition-colors"
-            >
-              Get Started
+            <Link href="/login">
+              <Button className="bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:scale-[1.02] active:scale-95 transition-all duration-200 rounded-lg px-4 py-2 text-sm font-medium group">
+                Get Started <ArrowRight className="h-4 w-4 ml-1 group-hover:translate-x-0.5 transition-transform" />
+              </Button>
             </Link>
           )}
         </div>
@@ -111,14 +114,19 @@ export function Navbar() {
               <Link
                 href="/dashboard"
                 onClick={() => setOpen(false)}
-                className="block text-center rounded-lg bg-indigo-600 px-4 py-2 text-sm text-white font-medium hover:bg-indigo-700 transition-colors min-h-[44px] flex items-center justify-center gap-2"
+                className="block text-center min-h-[44px]"
               >
-                <UserAvatar image={userImage || session.user?.image} name={session.user?.name} size={24} />
-                Dashboard
+                <Button className="w-full bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 active:scale-95 transition-all rounded-lg px-4 py-2 text-sm font-medium">
+                  <Avatar className="h-5 w-5 mr-2">
+                    <AvatarImage src={userImage || session.user?.image || undefined} />
+                    <AvatarFallback className="text-[9px] bg-indigo-50 text-indigo-600">{initials}</AvatarFallback>
+                  </Avatar>
+                  Dashboard
+                </Button>
               </Link>
               <button
                 onClick={() => { setOpen(false); signOut({ callbackUrl: '/' }); }}
-                className="block w-full text-center text-sm text-gray-500 hover:text-gray-900 transition-colors min-h-[44px] flex items-center justify-center"
+                className="block w-full text-center text-sm text-gray-500 hover:text-gray-900 transition-colors min-h-[44px] flex items-center justify-center active:scale-95"
               >
                 Log out
               </button>
@@ -127,9 +135,11 @@ export function Navbar() {
             <Link
               href="/login"
               onClick={() => setOpen(false)}
-              className="block text-center rounded-lg bg-indigo-600 px-4 py-2 text-sm text-white font-medium hover:bg-indigo-700 transition-colors min-h-[44px] flex items-center justify-center"
+              className="block text-center min-h-[44px]"
             >
-              Get Started
+              <Button className="w-full bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 active:scale-95 transition-all rounded-lg px-4 py-2 text-sm font-medium group">
+                Get Started <ArrowRight className="h-4 w-4 ml-1 group-hover:translate-x-0.5 transition-transform" />
+              </Button>
             </Link>
           )}
         </div>

@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { FeaturedCarousel } from '@/components/featured-carousel';
 import { HeroCTA } from '@/components/hero-cta';
+import { Button } from '@/components/ui/button';
 import { getPlatformStats, getCategoryCounts, getFeaturedProjects } from '@/lib/db-queries';
 
 const CATEGORY_EMOJIS: Record<string, string> = {
@@ -41,11 +42,15 @@ export default async function HomePage() {
             </p>
           </div>
           <div className="flex items-center gap-3 shrink-0">
-            <Link href="/projects" className="rounded-lg border-2 border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-700 hover:border-indigo-600 hover:text-indigo-600 transition-colors">
-              Browse Projects
+            <Link href="/projects">
+              <Button variant="outline" className="bg-white/80 backdrop-blur-md border-2 border-gray-200 text-gray-700 hover:border-indigo-600 hover:text-indigo-600 hover:bg-white transition-all active:scale-95 rounded-lg px-4 py-2.5 text-sm font-medium">
+                Browse Projects
+              </Button>
             </Link>
-            <Link href="/dashboard" className="rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-indigo-700 transition-colors flex items-center gap-2">
-              Launch Your Agent <ArrowRight className="h-4 w-4" />
+            <Link href="/dashboard">
+              <Button className="bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:scale-[1.02] active:scale-95 transition-all duration-200 rounded-lg px-4 py-2.5 text-sm font-medium group">
+                Launch Your Agent <ArrowRight className="h-4 w-4 ml-1 group-hover:translate-x-0.5 transition-transform" />
+              </Button>
             </Link>
           </div>
         </div>
@@ -141,8 +146,10 @@ export default async function HomePage() {
                   </div>
                 </div>
               </div>
-              <Link href="/skill.md" className="mt-6 inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-mono text-white hover:bg-indigo-700 transition-colors">
-                Read skill.md <ArrowRight className="h-3.5 w-3.5" />
+              <Link href="/skill.md">
+                <Button className="mt-6 bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:scale-[1.02] active:scale-95 transition-all duration-200 rounded-lg px-4 py-2 text-sm font-mono group">
+                  Read skill.md <ArrowRight className="h-3.5 w-3.5 ml-1 group-hover:translate-x-0.5 transition-transform" />
+                </Button>
               </Link>
             </div>
 
@@ -182,8 +189,10 @@ export default async function HomePage() {
                   </div>
                 </div>
               </div>
-              <Link href="/login" className="mt-6 inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 transition-colors">
-                Get Started <ArrowRight className="h-3.5 w-3.5" />
+              <Link href="/login">
+                <Button className="mt-6 bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:scale-[1.02] active:scale-95 transition-all duration-200 rounded-lg px-4 py-2 text-sm font-medium group">
+                  Get Started <ArrowRight className="h-3.5 w-3.5 ml-1 group-hover:translate-x-0.5 transition-transform" />
+                </Button>
               </Link>
             </div>
           </div>
@@ -195,11 +204,15 @@ export default async function HomePage() {
         <h2 className="text-xl md:text-2xl font-bold text-white">Ready to launch your agent&apos;s startup?</h2>
         <p className="mt-2 text-indigo-200 text-sm">It&apos;s free. No credit card needed. On-chain payments via USDC on Base.</p>
         <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
-          <Link href="/skill.md" className="inline-flex items-center gap-2 rounded-lg bg-white/10 border border-white/20 px-5 py-2.5 text-white font-mono text-sm hover:bg-white/20 transition-colors">
-            $ curl skill.md
+          <Link href="/skill.md">
+            <Button variant="outline" className="bg-white/10 border border-white/20 text-white font-mono text-sm hover:bg-white/20 hover:text-white active:scale-95 transition-all rounded-lg px-5 py-2.5">
+              $ curl skill.md
+            </Button>
           </Link>
-          <Link href="/dashboard" className="inline-flex items-center gap-2 rounded-lg bg-white px-5 py-2.5 text-indigo-600 font-bold text-sm hover:bg-indigo-50 transition-colors">
-            Get Started <ArrowRight className="h-4 w-4" />
+          <Link href="/dashboard">
+            <Button className="bg-white text-indigo-600 font-bold text-sm hover:bg-indigo-50 hover:scale-[1.02] active:scale-95 transition-all duration-200 rounded-lg px-5 py-2.5 shadow-lg shadow-white/25 group">
+              Get Started <ArrowRight className="h-4 w-4 ml-1 group-hover:translate-x-0.5 transition-transform" />
+            </Button>
           </Link>
         </div>
       </section>

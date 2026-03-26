@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { Button } from '@/components/ui/button';
 
 interface AgentData {
   id: string;
@@ -396,13 +397,15 @@ export default function DashboardClient({ userId, userEmail, userName, initialPr
                     </div>
                   </div>
                   <div className="relative self-start sm:self-center" data-agent-menu>
-                    <button
+                    <Button
+                      variant="ghost"
+                      size="icon"
                       onClick={() => setOpenMenuId(openMenuId === agent.id ? null : agent.id)}
                       aria-label="Agent settings"
-                      className="rounded-lg bg-white px-3 py-2 text-sm text-gray-500 hover:text-gray-900 hover:bg-gray-50 transition-colors shadow-sm"
+                      className="rounded-lg text-gray-500 hover:text-gray-900 hover:bg-gray-50 active:scale-95 transition-all"
                     >
                       <Settings className="h-4 w-4" />
-                    </button>
+                    </Button>
                     {openMenuId === agent.id && (
                       <div className="absolute right-0 top-full mt-1 w-48 rounded-lg bg-white shadow-lg border border-gray-200 py-1 z-10">
                         <button
@@ -445,12 +448,12 @@ export default function DashboardClient({ userId, userEmail, userName, initialPr
                     </button>
                   </div>
                 </div>
-                <button
+                <Button
                   onClick={() => setRefreshedKey(null)}
-                  className="mt-3 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 transition-colors shadow-sm"
+                  className="mt-3 bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:scale-[1.02] active:scale-95 transition-all duration-200 rounded-lg px-4 py-2 text-sm font-medium"
                 >
                   Done
-                </button>
+                </Button>
               </div>
             )}
 
@@ -537,22 +540,22 @@ export default function DashboardClient({ userId, userEmail, userName, initialPr
                       <code className="text-sm text-gray-900 flex-1 font-mono select-all">
                         https://clawstarter.app/skill.md
                       </code>
-                      <button
+                      <Button
                         onClick={() => copyToClipboard('https://clawstarter.app/skill.md')}
-                        className="shrink-0 flex items-center gap-1.5 rounded-lg bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-indigo-700 transition-colors shadow-sm"
+                        className="shrink-0 bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 active:scale-95 transition-all rounded-lg px-3 py-1.5 text-sm font-medium"
                       >
                         {copied ? (
                           <>
-                            <Check className="h-3.5 w-3.5" />
+                            <Check className="h-3.5 w-3.5 mr-1" />
                             Copied
                           </>
                         ) : (
                           <>
-                            <Copy className="h-3.5 w-3.5" />
+                            <Copy className="h-3.5 w-3.5 mr-1" />
                             Copy
                           </>
                         )}
-                      </button>
+                      </Button>
                     </div>
 
                     <div>
@@ -768,13 +771,13 @@ export default function DashboardClient({ userId, userEmail, userName, initialPr
 
             {/* Save */}
             <div className="flex items-center gap-3">
-              <button
+              <Button
                 onClick={handleProfileSave}
                 disabled={profileSaving}
-                className="rounded-lg bg-indigo-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:scale-[1.02] active:scale-95 transition-all duration-200 rounded-lg px-6 py-2.5 text-sm font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {profileSaving ? 'Saving...' : 'Save Changes'}
-              </button>
+              </Button>
               {profileSaved && (
                 <span className="text-sm text-green-600 flex items-center gap-1">
                   <Check className="h-4 w-4" /> Saved!

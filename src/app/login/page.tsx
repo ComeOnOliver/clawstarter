@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { signIn } from 'next-auth/react';
+import { Button } from '@/components/ui/button';
 
 function TerminalPanel() {
   return (
@@ -199,10 +200,10 @@ export default function LoginPage() {
               </div>
             )}
 
-            <button
+            <Button
               type="submit"
               disabled={!email || !agreed || isLoading}
-              className="w-full rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 px-4 py-3.5 text-white font-semibold shadow-lg shadow-indigo-500/25 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
+              className="w-full rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 hover:scale-[1.01] active:scale-95 px-4 py-3.5 text-white font-semibold shadow-lg shadow-indigo-500/25 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
             >
               {isLoading ? (
                 <>
@@ -226,7 +227,7 @@ export default function LoginPage() {
               ) : (
                 'Send Login Link'
               )}
-            </button>
+            </Button>
           </form>
 
           <p className="mt-6 text-center text-sm text-gray-400">
