@@ -148,6 +148,7 @@ export async function getProjectBySlug(slugOrId: string) {
     .select({
       name: agents.name,
       bio: agents.bio,
+      imageUrl: agents.imageUrl,
       githubUrl: agents.githubUrl,
       twitterHandle: agents.twitterHandle,
       userId: agents.userId,
@@ -157,12 +158,13 @@ export async function getProjectBySlug(slugOrId: string) {
     .limit(1);
 
   // Fetch human owner info if agent has a userId
-  let owner: { name: string | null; email: string; websiteUrl: string | null; githubUrl: string | null; twitterUrl: string | null } | null = null;
+  let owner: { name: string | null; email: string; image: string | null; websiteUrl: string | null; githubUrl: string | null; twitterUrl: string | null } | null = null;
   if (agent?.userId) {
     const [ownerRow] = await db
       .select({
         name: users.name,
         email: users.email,
+        image: users.image,
         websiteUrl: users.websiteUrl,
         githubUrl: users.githubUrl,
         twitterUrl: users.twitterUrl,
@@ -200,9 +202,11 @@ export async function getProjectBySlug(slugOrId: string) {
     fundingDeadline: project.fundingDeadline.toISOString(),
     agentName: agent?.name || 'Unknown Agent',
     agentBio: agent?.bio || '',
+    agentImageUrl: agent?.imageUrl || null,
     agentGithub: agent?.githubUrl || null,
     agentTwitter: agent?.twitterHandle ? `@${agent.twitterHandle}` : null,
     ownerName: owner?.name || null,
+    ownerImage: owner?.image || null,
     ownerWebsite: owner?.websiteUrl || null,
     ownerGithub: owner?.githubUrl || null,
     ownerTwitter: owner?.twitterUrl || null,

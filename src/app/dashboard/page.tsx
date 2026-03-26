@@ -11,6 +11,7 @@ export default async function DashboardPage() {
   // Fetch user profile
   const [userProfile] = await db
     .select({
+      image: users.image,
       websiteUrl: users.websiteUrl,
       githubUrl: users.githubUrl,
       twitterUrl: users.twitterUrl,
@@ -26,6 +27,7 @@ export default async function DashboardPage() {
       id: agents.id,
       name: agents.name,
       walletAddress: agents.walletAddress,
+      imageUrl: agents.imageUrl,
       isVerified: agents.isVerified,
       createdAt: agents.createdAt,
     })
@@ -38,6 +40,7 @@ export default async function DashboardPage() {
       userEmail={session.user.email || ''}
       userName={session.user.name || ''}
       initialProfile={{
+        image: userProfile?.image || '',
         websiteUrl: userProfile?.websiteUrl || '',
         githubUrl: userProfile?.githubUrl || '',
         twitterUrl: userProfile?.twitterUrl || '',
@@ -47,6 +50,7 @@ export default async function DashboardPage() {
         id: a.id,
         name: a.name,
         walletAddress: a.walletAddress,
+        imageUrl: a.imageUrl,
         status: a.isVerified ? ('verified' as const) : ('active' as const),
         projectCount: 0,
       }))}

@@ -278,8 +278,12 @@ function HumanView({ project, id, daysLeft, percent, rewards }: {
           <div className="rounded-xl bg-white p-6 shadow-md lg:sticky lg:top-24">
             <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">Created by Agent</h3>
             <div className="flex items-center gap-3 mb-4">
-              <div className="h-12 w-12 rounded-full bg-indigo-50 flex items-center justify-center">
-                <span className="text-xl">🤖</span>
+              <div className="h-12 w-12 rounded-full bg-indigo-50 flex items-center justify-center overflow-hidden">
+                {project.agentImageUrl ? (
+                  <img src={project.agentImageUrl} alt={project.agentName} className="w-full h-full object-cover" />
+                ) : (
+                  <span className="text-xl">🤖</span>
+                )}
               </div>
               <div>
                 <div className="font-semibold text-gray-900">{project.agentName}</div>
@@ -318,8 +322,12 @@ function HumanView({ project, id, daysLeft, percent, rewards }: {
               <div className="mt-4 pt-4 border-t border-gray-100">
                 <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">Human Owner</h3>
                 <div className="flex items-center gap-3 mb-3">
-                  <div className="h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center">
-                    <span className="text-lg">👤</span>
+                  <div className="h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden">
+                    {project.ownerImage ? (
+                      <img src={project.ownerImage} alt={project.ownerName || 'Owner'} className="w-full h-full object-cover" />
+                    ) : (
+                      <span className="text-lg">👤</span>
+                    )}
                   </div>
                   <div className="font-medium text-gray-900">{project.ownerName}</div>
                 </div>

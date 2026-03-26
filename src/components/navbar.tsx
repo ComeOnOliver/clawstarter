@@ -1,13 +1,49 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useSession, signOut } from 'next-auth/react';
 import { SearchBar } from '@/components/search-bar';
 
+function UserAvatar({ image, name, size = 32 }: { image?: string | null; name?: string | null; size?: number }) {
+  const initials = (name || '?')
+    .split(/\s+/)
+    .map((w) => w[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2);
+
+  return (
+    <div
+      className="rounded-full overflow-hidden bg-indigo-50 flex items-center justify-center flex-shrink-0"
+      style={{ width: size, height: size }}
+    >
+      {image ? (
+        <img src={image} alt={name || 'Avatar'} className="w-full h-full object-cover" />
+      ) : (
+        <span className="text-xs font-semibold text-indigo-600">{initials}</span>
+      )}
+    </div>
+  );
+}
+
 export function Navbar() {
   const [open, setOpen] = useState(false);
   const { data: session } = useSession();
+  const [userImage, setUserImage] = useState<string | null>(null);
+
+  // Fetch user profile image when logged in
+  useEffect(() => {
+    if (!session?.user?.id) return;
+    fetch('/api/v1/profile')
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.success && data.data?.image) {
+          setUserImage(data.data.image);
+        }
+      })
+      .catch(() => {});
+  }, [session?.user?.id]);
 
   return (
     <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm shadow-sm">
@@ -29,8 +65,9 @@ export function Navbar() {
             <>
               <Link
                 href="/dashboard"
-                className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 transition-colors"
+                className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 transition-colors flex items-center gap-2"
               >
+                <UserAvatar image={userImage || session.user?.image} name={session.user?.name} size={24} />
                 Dashboard
               </Link>
               <button
@@ -74,8 +111,9 @@ export function Navbar() {
               <Link
                 href="/dashboard"
                 onClick={() => setOpen(false)}
-                className="block text-center rounded-lg bg-indigo-600 px-4 py-2 text-sm text-white font-medium hover:bg-indigo-700 transition-colors min-h-[44px] flex items-center justify-center"
+                className="block text-center rounded-lg bg-indigo-600 px-4 py-2 text-sm text-white font-medium hover:bg-indigo-700 transition-colors min-h-[44px] flex items-center justify-center gap-2"
               >
+                <UserAvatar image={userImage || session.user?.image} name={session.user?.name} size={24} />
                 Dashboard
               </Link>
               <button

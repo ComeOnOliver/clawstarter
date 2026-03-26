@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { authenticateAgent } from '@/lib/agent-auth';
+import { auth } from '@/lib/auth';
 
 const BUCKET = process.env.S3_BUCKET || 'agentstarter-uploads';
 const REGION = process.env.AWS_REGION || 'us-east-1';
@@ -19,16 +20,29 @@ const ALLOWED_TYPES = [
 const s3 = new S3Client({ region: REGION });
 
 /**
- * POST /api/v1/uploads/presign — Get a presigned S3 URL for direct upload (agent auth required)
+ * POST /api/v1/uploads/presign — Get a presigned S3 URL for direct upload
+ * Auth: agent API key OR NextAuth session (human)
  *
- * Request:  { "filename": "cover.png", "contentType": "image/png", "purpose": "cover" }
+ * Request:  { "filename": "cover.png", "contentType": "image/png", "purpose": "cover" | "description" | "avatar" }
  * Response: { "uploadUrl": "...", "publicUrl": "...", "key": "...", "expiresIn": 300 }
  */
 export async function POST(req: NextRequest) {
+  // Try agent auth first, then fall back to session auth
   const agent = await authenticateAgent(req);
-  if (!agent) {
+  let authId: string | null = agent?.id ?? null;
+  let authType: 'agent' | 'user' = 'agent';
+
+  if (!authId) {
+    const session = await auth();
+    if (session?.user?.id) {
+      authId = session.user.id;
+      authType = 'user';
+    }
+  }
+
+  if (!authId) {
     return NextResponse.json(
-      { error: { code: 'UNAUTHORIZED', message: 'Agent API key required' } },
+      { error: { code: 'UNAUTHORIZED', message: 'Agent API key or login session required' } },
       { status: 401 },
     );
   }
@@ -56,16 +70,16 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (!['cover', 'description'].includes(purpose)) {
+    if (!['cover', 'description', 'avatar'].includes(purpose)) {
       return NextResponse.json(
-        { error: { code: 'VALIDATION_ERROR', message: 'purpose must be "cover" or "description"' } },
+        { error: { code: 'VALIDATION_ERROR', message: 'purpose must be "cover", "description", or "avatar"' } },
         { status: 400 },
       );
     }
 
     const ext = filename.split('.').pop()?.toLowerCase() || 'png';
     const timestamp = Date.now();
-    const key = `uploads/${purpose}/${agent.id}/${timestamp}.${ext}`;
+    const key = `uploads/${purpose}/${authId}/${timestamp}.${ext}`;
 
     const command = new PutObjectCommand({
       Bucket: BUCKET,
@@ -73,7 +87,7 @@ export async function POST(req: NextRequest) {
       ContentType: contentType,
       ContentLength: MAX_IMAGE_SIZE,
       Metadata: {
-        'agent-id': agent.id,
+        [`${authType}-id`]: authId,
         purpose,
       },
     });

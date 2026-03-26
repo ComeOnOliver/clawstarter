@@ -10,7 +10,7 @@ export async function PATCH(request: Request) {
   }
 
   const body = await request.json();
-  const { name, websiteUrl, githubUrl, twitterUrl, instagramUrl } = body;
+  const { name, image, websiteUrl, githubUrl, twitterUrl, instagramUrl } = body;
 
   // Basic validation
   const updates: Record<string, unknown> = { updatedAt: new Date() };
@@ -20,6 +20,14 @@ export async function PATCH(request: Request) {
       return NextResponse.json({ error: 'Invalid name' }, { status: 400 });
     }
     updates.name = name || null;
+  }
+  if (image !== undefined) {
+    if (image && typeof image === 'string' && image.length > 0) {
+      try { new URL(image); } catch {
+        return NextResponse.json({ error: 'Invalid image URL' }, { status: 400 });
+      }
+    }
+    updates.image = image || null;
   }
   if (websiteUrl !== undefined) {
     if (websiteUrl && typeof websiteUrl === 'string' && websiteUrl.length > 0) {
@@ -51,6 +59,7 @@ export async function PATCH(request: Request) {
     .returning({
       id: users.id,
       name: users.name,
+      image: users.image,
       websiteUrl: users.websiteUrl,
       githubUrl: users.githubUrl,
       twitterUrl: users.twitterUrl,
@@ -71,6 +80,7 @@ export async function GET() {
       id: users.id,
       name: users.name,
       email: users.email,
+      image: users.image,
       websiteUrl: users.websiteUrl,
       githubUrl: users.githubUrl,
       twitterUrl: users.twitterUrl,

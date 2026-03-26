@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   Bot,
   Copy,
@@ -15,18 +15,22 @@ import {
   Activity,
   Trash2,
   RefreshCw,
+  Camera,
 } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface AgentData {
   id: string;
   name: string;
   walletAddress: string | null;
+  imageUrl: string | null;
   projectCount: number;
   status: 'active' | 'verified' | 'idle';
 }
 
 interface ProfileData {
+  image: string;
   websiteUrl: string;
   githubUrl: string;
   twitterUrl: string;
@@ -58,6 +62,132 @@ const statusColors: Record<string, string> = {
   funded: 'bg-green-50 text-green-700 shadow-sm',
 };
 
+async function uploadAvatar(file: File): Promise<string> {
+  // 1. Get presigned URL
+  const presignRes = await fetch('/api/v1/uploads/presign', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      filename: file.name,
+      contentType: file.type,
+      purpose: 'avatar',
+    }),
+  });
+  if (!presignRes.ok) {
+    const err = await presignRes.json();
+    throw new Error(err.error?.message || 'Failed to get upload URL');
+  }
+  const { upload_url, public_url } = await presignRes.json();
+
+  // 2. Upload directly to S3
+  const uploadRes = await fetch(upload_url, {
+    method: 'PUT',
+    headers: { 'Content-Type': file.type },
+    body: file,
+  });
+  if (!uploadRes.ok) {
+    throw new Error('Failed to upload image to storage');
+  }
+
+  return public_url;
+}
+
+function AvatarUpload({
+  currentImage,
+  name,
+  size = 96,
+  onUpload,
+}: {
+  currentImage: string | null;
+  name: string;
+  size?: number;
+  onUpload: (url: string) => Promise<void>;
+}) {
+  const [uploading, setUploading] = useState(false);
+  const [preview, setPreview] = useState<string | null>(null);
+  const [displayImage, setDisplayImage] = useState(currentImage);
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  const initials = name
+    .split(/\s+/)
+    .map((w) => w[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2);
+
+  const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Show preview
+    const reader = new FileReader();
+    reader.onload = () => setPreview(reader.result as string);
+    reader.readAsDataURL(file);
+
+    setUploading(true);
+    try {
+      const publicUrl = await uploadAvatar(file);
+      await onUpload(publicUrl);
+      setDisplayImage(publicUrl);
+      setPreview(null);
+    } catch (err: any) {
+      alert(err.message || 'Upload failed');
+      setPreview(null);
+    } finally {
+      setUploading(false);
+      if (fileRef.current) fileRef.current.value = '';
+    }
+  };
+
+  const showImage = preview || displayImage;
+
+  return (
+    <div className="relative group" style={{ width: size, height: size }}>
+      <div
+        className="rounded-full overflow-hidden bg-indigo-50 flex items-center justify-center"
+        style={{ width: size, height: size }}
+      >
+        {showImage ? (
+          <img
+            src={showImage}
+            alt={name}
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <span
+            className="font-semibold text-indigo-600"
+            style={{ fontSize: size * 0.35 }}
+          >
+            {initials || '?'}
+          </span>
+        )}
+      </div>
+      <button
+        onClick={() => fileRef.current?.click()}
+        disabled={uploading}
+        className="absolute inset-0 rounded-full bg-black/0 group-hover:bg-black/40 transition-colors flex items-center justify-center cursor-pointer"
+      >
+        <Camera
+          className="text-white opacity-0 group-hover:opacity-100 transition-opacity"
+          style={{ width: size * 0.3, height: size * 0.3 }}
+        />
+      </button>
+      {uploading && (
+        <div className="absolute inset-0 rounded-full bg-black/50 flex items-center justify-center">
+          <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
+        </div>
+      )}
+      <input
+        ref={fileRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={handleFile}
+      />
+    </div>
+  );
+}
+
 export default function DashboardClient({ userId, userEmail, userName, initialProfile, initialAgents }: DashboardProps) {
   const [tab, setTab] = useState<'agents' | 'funded' | 'profile'>('agents');
   const [copied, setCopied] = useState(false);
@@ -71,6 +201,7 @@ export default function DashboardClient({ userId, userEmail, userName, initialPr
 
   // Profile form state
   const [displayName, setDisplayName] = useState(userName);
+  const [profileImage, setProfileImage] = useState(initialProfile.image);
   const [websiteUrl, setWebsiteUrl] = useState(initialProfile.websiteUrl);
   const [githubUrl, setGithubUrl] = useState(initialProfile.githubUrl);
   const [twitterUrl, setTwitterUrl] = useState(initialProfile.twitterUrl);
@@ -98,6 +229,34 @@ export default function DashboardClient({ userId, userEmail, userName, initialPr
     if (res.ok) {
       setAgentsList(prev => prev.filter(a => a.id !== agentId));
     }
+  };
+
+  const handleAgentAvatarUpload = async (agentId: string, imageUrl: string) => {
+    const res = await fetch(`/api/v1/agents/${agentId}/avatar`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ image_url: imageUrl }),
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error?.message || 'Failed to update agent avatar');
+    }
+    setAgentsList(prev =>
+      prev.map(a => a.id === agentId ? { ...a, imageUrl } : a)
+    );
+  };
+
+  const handleProfileImageUpload = async (imageUrl: string) => {
+    const res = await fetch('/api/v1/profile', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ image: imageUrl }),
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || 'Failed to update profile image');
+    }
+    setProfileImage(imageUrl);
   };
 
   useEffect(() => {
@@ -201,8 +360,13 @@ export default function DashboardClient({ userId, userEmail, userName, initialPr
                   key={agent.id}
                   className="rounded-xl bg-white shadow-md p-6 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6"
                 >
-                  <div className="h-14 w-14 rounded-xl bg-indigo-50 flex items-center justify-center shrink-0">
-                    <Bot className="h-7 w-7 text-indigo-600" />
+                  <div className="shrink-0">
+                    <AvatarUpload
+                      currentImage={agent.imageUrl}
+                      name={agent.name}
+                      size={56}
+                      onUpload={(url) => handleAgentAvatarUpload(agent.id, url)}
+                    />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
@@ -486,6 +650,29 @@ export default function DashboardClient({ userId, userEmail, userName, initialPr
         {tab === 'profile' && (
           <div className="max-w-2xl space-y-6">
             <h2 className="text-xl font-semibold text-gray-900">Edit Profile</h2>
+
+            {/* Profile Picture */}
+            <div className="rounded-xl bg-white shadow-md p-6">
+              <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4">
+                Profile Picture
+              </h3>
+              <div className="flex items-center gap-6">
+                <AvatarUpload
+                  currentImage={profileImage || null}
+                  name={displayName || userEmail}
+                  size={96}
+                  onUpload={handleProfileImageUpload}
+                />
+                <div>
+                  <p className="text-sm text-gray-600">
+                    Click on the avatar to upload a new photo.
+                  </p>
+                  <p className="text-xs text-gray-400 mt-1">
+                    JPG, PNG, WebP or GIF. Max 5MB.
+                  </p>
+                </div>
+              </div>
+            </div>
 
             {/* Account Info */}
             <div className="rounded-xl bg-white shadow-md p-6 space-y-4">
