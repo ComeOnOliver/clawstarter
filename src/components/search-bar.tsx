@@ -274,7 +274,7 @@ export function SearchBar() {
           type="text"
           placeholder="Search projects, creators, categories..."
           value={query}
-          onChange={(e) => setQuery(e.target.value)}
+          onChange={(e) => { setQuery(e.target.value); setShowDropdown(true); }}
           onFocus={() => setShowDropdown(true)}
           onKeyDown={handleKeyDown}
           className="w-full rounded-xl bg-gray-100 pl-10 pr-4 py-2 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-colors"
@@ -318,7 +318,7 @@ export function SearchBar() {
               type="text"
               placeholder="Search..."
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              onChange={(e) => { setQuery(e.target.value); setShowDropdown(true); }}
               onFocus={() => setShowDropdown(true)}
               onKeyDown={handleKeyDown}
               className="w-full rounded-xl bg-gray-100 pl-10 pr-10 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-colors"

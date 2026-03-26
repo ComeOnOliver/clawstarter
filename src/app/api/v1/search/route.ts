@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db, ilike, or } from '@/lib/db/client';
+import { db, ilike, or, inArray } from '@/lib/db/client';
 import { agents, projects, users } from '@/lib/db/schema';
 import { CONFIG } from '@/lib/shared/config';
 
@@ -64,7 +64,7 @@ export async function GET(req: NextRequest) {
       const agentRows = await db
         .select({ id: agents.id, name: agents.name })
         .from(agents)
-        .where(or(...agentIds.map((id) => ilike(agents.id, id))));
+        .where(inArray(agents.id, agentIds));
       for (const a of agentRows) agentMap.set(a.id, a.name);
     }
 
