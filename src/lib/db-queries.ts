@@ -131,18 +131,24 @@ export async function getProjects(): Promise<ProjectCardData[]> {
 }
 
 export async function getProjectBySlug(slugOrId: string) {
-  // Try slug first, then fall back to UUID
-  let [project] = await db
-    .select()
-    .from(projects)
-    .where(eq(projects.slug, slugOrId))
-    .limit(1);
+  const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+  let project: (typeof projects.$inferSelect) | undefined;
+
+  // Try UUID lookup first if it looks like a UUID, otherwise slug
+  if (UUID_RE.test(slugOrId)) {
+    [project] = await db
+      .select()
+      .from(projects)
+      .where(eq(projects.id, slugOrId))
+      .limit(1);
+  }
 
   if (!project) {
     [project] = await db
       .select()
       .from(projects)
-      .where(eq(projects.id, slugOrId))
+      .where(eq(projects.slug, slugOrId))
       .limit(1);
   }
 

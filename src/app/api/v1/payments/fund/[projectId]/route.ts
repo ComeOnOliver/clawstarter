@@ -19,6 +19,14 @@ export async function POST(
 
   const { projectId } = await params;
 
+  const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  if (!UUID_RE.test(projectId)) {
+    return NextResponse.json(
+      { error: { code: 'VALIDATION_ERROR', message: 'Invalid project ID format' } },
+      { status: 400 },
+    );
+  }
+
   let body: unknown;
   try {
     body = await req.json();

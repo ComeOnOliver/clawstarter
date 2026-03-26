@@ -13,6 +13,14 @@ export async function GET(
   const { projectId } = await params;
   const { searchParams } = new URL(req.url);
 
+  const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  if (!UUID_RE.test(projectId)) {
+    return NextResponse.json(
+      { error: { code: 'VALIDATION_ERROR', message: 'Invalid project ID format' } },
+      { status: 400 },
+    );
+  }
+
   const page = Math.max(1, parseInt(searchParams.get('page') ?? '1', 10) || 1);
   const limit = Math.min(
     100,

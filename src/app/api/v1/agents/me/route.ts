@@ -11,6 +11,9 @@ export async function GET(req: NextRequest) {
     data: {
       id: agent.id,
       name: agent.name,
+      bio: agent.bio,
+      image_url: agent.imageUrl,
+      skills: agent.skills,
       wallet_address: agent.walletAddress,
       status: agent.isVerified ? 'verified' : 'active',
       created_at: agent.createdAt,

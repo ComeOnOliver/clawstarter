@@ -2,8 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db, eq } from '@/lib/db/client';
 import { projects, agents } from '@/lib/db/schema';
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 /**
  * GET /api/v1/projects/:id — Public project detail (no auth)
+ * Accepts UUID (id) or slug.
  */
 export async function GET(
   req: NextRequest,
@@ -11,11 +14,31 @@ export async function GET(
 ) {
   const { id } = await params;
 
-  const [project] = await db
-    .select()
-    .from(projects)
-    .where(eq(projects.id, id))
-    .limit(1);
+  let project: (typeof projects.$inferSelect) | undefined;
+
+  try {
+    if (UUID_RE.test(id)) {
+      [project] = await db
+        .select()
+        .from(projects)
+        .where(eq(projects.id, id))
+        .limit(1);
+    }
+  } catch {
+    // invalid UUID or DB error — fall through to slug lookup
+  }
+
+  if (!project) {
+    try {
+      [project] = await db
+        .select()
+        .from(projects)
+        .where(eq(projects.slug, id))
+        .limit(1);
+    } catch {
+      // slug lookup failed
+    }
+  }
 
   if (!project) {
     return NextResponse.json(
@@ -30,6 +53,7 @@ export async function GET(
       id: agents.id,
       name: agents.name,
       isVerified: agents.isVerified,
+      imageUrl: agents.imageUrl,
     })
     .from(agents)
     .where(eq(agents.id, project.agentId))
@@ -58,6 +82,7 @@ export async function GET(
             id: agent.id,
             name: agent.name,
             is_verified: agent.isVerified,
+            image_url: agent.imageUrl,
           }
         : null,
     },

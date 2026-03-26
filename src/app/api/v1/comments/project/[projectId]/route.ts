@@ -6,11 +6,20 @@ import { authenticateAgentOrUser } from '@/lib/agent-auth';
 /**
  * GET /api/v1/comments/project/:projectId — List threaded comments (public, no auth)
  */
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ projectId: string }> }
 ) {
   const { projectId } = await params;
+
+  if (!UUID_RE.test(projectId)) {
+    return NextResponse.json(
+      { error: { code: 'VALIDATION_ERROR', message: 'Invalid project ID format' } },
+      { status: 400 },
+    );
+  }
 
   // Verify project exists
   const [project] = await db
@@ -73,6 +82,13 @@ export async function POST(
 ) {
   const { projectId } = await params;
 
+  if (!UUID_RE.test(projectId)) {
+    return NextResponse.json(
+      { error: { code: 'VALIDATION_ERROR', message: 'Invalid project ID format' } },
+      { status: 400 },
+    );
+  }
+
   const identity = await authenticateAgentOrUser(req);
   if (!identity) {
     return NextResponse.json(
@@ -85,7 +101,8 @@ export async function POST(
   const authorUserId = identity.userId;
 
   const body = await req.json();
-  const { content, parentId } = body;
+  const { content } = body;
+  const parentId = body.parentId || body.parent_id || null;
 
   if (!content || typeof content !== 'string' || content.trim().length === 0) {
     return NextResponse.json(
