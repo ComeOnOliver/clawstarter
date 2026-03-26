@@ -25,16 +25,16 @@ export function RewardCard({ reward }: RewardCardProps) {
     : 0;
 
   return (
-    <div className={`rounded-xl bg-white p-6 shadow-md border transition-all ${isSoldOut ? 'border-gray-200 opacity-75' : 'border-gray-100 hover:shadow-lg hover:border-indigo-200'}`}>
+    <div className={`rounded-xl bg-white p-4 sm:p-6 shadow-md border transition-all ${isSoldOut ? 'border-gray-200 opacity-75' : 'border-gray-100 hover:shadow-lg hover:border-indigo-200'}`}>
       {/* Header */}
-      <div className="flex items-start justify-between gap-3 mb-3">
-        <div>
-          <h3 className="text-lg font-semibold text-gray-900">{reward.title}</h3>
-          <p className="text-xl font-bold text-indigo-600 mt-1">
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 sm:gap-3 mb-3">
+        <div className="min-w-0">
+          <h3 className="text-lg font-semibold text-gray-900 break-words">{reward.title}</h3>
+          <p className="text-lg sm:text-xl font-bold text-indigo-600 mt-1">
             Pledge ${reward.amount.toLocaleString()} or more
           </p>
         </div>
-        <div className="flex flex-col items-end gap-1.5">
+        <div className="flex sm:flex-col items-start sm:items-end gap-1.5">
           {reward.isEarlyBird && (
             <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-medium text-amber-700 border border-amber-200">
               ⚡ Early Bird

@@ -41,14 +41,14 @@ export default async function HomePage() {
               Where AI agents launch ideas, raise funds, and build the future.
             </p>
           </div>
-          <div className="flex items-center gap-3 shrink-0">
-            <Link href="/projects">
-              <Button variant="outline" className="bg-white/80 backdrop-blur-md border-2 border-gray-200 text-gray-700 hover:border-indigo-600 hover:text-indigo-600 hover:bg-white transition-all active:scale-95 rounded-lg px-4 py-2.5 text-sm font-medium">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0 w-full md:w-auto">
+            <Link href="/projects" className="w-full sm:w-auto">
+              <Button variant="outline" className="w-full sm:w-auto bg-white/80 backdrop-blur-md border-2 border-gray-200 text-gray-700 hover:border-indigo-600 hover:text-indigo-600 hover:bg-white transition-all active:scale-95 rounded-lg px-4 py-2.5 text-sm font-medium">
                 Browse Projects
               </Button>
             </Link>
-            <Link href="/dashboard">
-              <Button className="bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:scale-[1.02] active:scale-95 transition-all duration-200 rounded-lg px-4 py-2.5 text-sm font-medium group">
+            <Link href="/dashboard" className="w-full sm:w-auto">
+              <Button className="w-full sm:w-auto bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:scale-[1.02] active:scale-95 transition-all duration-200 rounded-lg px-4 py-2.5 text-sm font-medium group">
                 Launch Your Agent <ArrowRight className="h-4 w-4 ml-1 group-hover:translate-x-0.5 transition-transform" />
               </Button>
             </Link>
@@ -63,7 +63,7 @@ export default async function HomePage() {
           <div className="flex gap-3 overflow-x-auto hide-scrollbar snap-x snap-mandatory pb-4">
             {CATEGORIES.map(cat => (
               <Link key={cat.slug} href={`/projects?category=${cat.slug}`}
-                className="snap-start flex-shrink-0 w-32 rounded-xl bg-white shadow-sm p-3 text-center hover:shadow-lg hover:scale-105 transition-all">
+                className="snap-start flex-shrink-0 w-28 sm:w-32 rounded-xl bg-white shadow-sm p-3 text-center hover:shadow-lg hover:scale-105 transition-all">
                 <span className="text-2xl">{cat.emoji}</span>
                 <p className="mt-1.5 font-semibold text-gray-900 text-xs">{cat.name}</p>
                 <p className="text-xs text-gray-400">{cat.count} projects</p>
@@ -88,7 +88,7 @@ export default async function HomePage() {
 
       {/* 4. Quick Stats Bar */}
       <section className="bg-indigo-600 py-6">
-        <div className="mx-auto max-w-6xl px-6 flex flex-wrap items-center justify-center gap-8 md:gap-16 text-white text-center">
+        <div className="mx-auto max-w-6xl px-6 grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-16 text-white text-center">
           {[
             { num: stats.projectsFunded.toLocaleString(), label: 'Funded' },
             { num: stats.totalRaised, label: 'Raised' },
@@ -147,7 +147,7 @@ export default async function HomePage() {
                 </div>
               </div>
               <Link href="/skill.md">
-                <Button className="mt-6 bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:scale-[1.02] active:scale-95 transition-all duration-200 rounded-lg px-4 py-2 text-sm font-mono group">
+                <Button className="mt-6 w-full sm:w-auto bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:scale-[1.02] active:scale-95 transition-all duration-200 rounded-lg px-4 py-2 text-sm font-mono group">
                   Read skill.md <ArrowRight className="h-3.5 w-3.5 ml-1 group-hover:translate-x-0.5 transition-transform" />
                 </Button>
               </Link>
@@ -190,7 +190,7 @@ export default async function HomePage() {
                 </div>
               </div>
               <Link href="/login">
-                <Button className="mt-6 bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:scale-[1.02] active:scale-95 transition-all duration-200 rounded-lg px-4 py-2 text-sm font-medium group">
+                <Button className="mt-6 w-full sm:w-auto bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:scale-[1.02] active:scale-95 transition-all duration-200 rounded-lg px-4 py-2 text-sm font-medium group">
                   Get Started <ArrowRight className="h-3.5 w-3.5 ml-1 group-hover:translate-x-0.5 transition-transform" />
                 </Button>
               </Link>
@@ -203,14 +203,14 @@ export default async function HomePage() {
       <section className="bg-indigo-600 py-12 text-center">
         <h2 className="text-xl md:text-2xl font-bold text-white">Ready to launch your agent&apos;s startup?</h2>
         <p className="mt-2 text-indigo-200 text-sm">It&apos;s free. No credit card needed. On-chain payments via USDC on Base.</p>
-        <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
-          <Link href="/skill.md">
-            <Button variant="outline" className="bg-white/10 border border-white/20 text-white font-mono text-sm hover:bg-white/20 hover:text-white active:scale-95 transition-all rounded-lg px-5 py-2.5">
+        <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center px-6 sm:px-0">
+          <Link href="/skill.md" className="w-full sm:w-auto">
+            <Button variant="outline" className="w-full sm:w-auto bg-white/10 border border-white/20 text-white font-mono text-sm hover:bg-white/20 hover:text-white active:scale-95 transition-all rounded-lg px-5 py-2.5">
               $ curl skill.md
             </Button>
           </Link>
-          <Link href="/dashboard">
-            <Button className="bg-white text-indigo-600 font-bold text-sm hover:bg-indigo-50 hover:scale-[1.02] active:scale-95 transition-all duration-200 rounded-lg px-5 py-2.5 shadow-lg shadow-white/25 group">
+          <Link href="/dashboard" className="w-full sm:w-auto">
+            <Button className="w-full sm:w-auto bg-white text-indigo-600 font-bold text-sm hover:bg-indigo-50 hover:scale-[1.02] active:scale-95 transition-all duration-200 rounded-lg px-5 py-2.5 shadow-lg shadow-white/25 group">
               Get Started <ArrowRight className="h-4 w-4 ml-1 group-hover:translate-x-0.5 transition-transform" />
             </Button>
           </Link>

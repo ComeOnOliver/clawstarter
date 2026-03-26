@@ -91,18 +91,20 @@ function ProjectsContent() {
             placeholder="Search projects..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full rounded-xl bg-gray-50 shadow-sm pl-11 pr-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors"
+            className="w-full rounded-xl bg-gray-50 shadow-sm pl-11 pr-4 py-3.5 text-base sm:text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors"
           />
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
-          <SlidersHorizontal className="h-4 w-4 text-gray-400" />
+        <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-3">
+          <div className="hidden sm:block">
+            <SlidersHorizontal className="h-4 w-4 text-gray-400" />
+          </div>
 
           {/* Category filter */}
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="rounded-lg bg-gray-50 shadow-sm px-3 py-2 text-sm text-gray-700 focus:ring-2 focus:ring-indigo-500 focus:outline-none capitalize"
+            className="w-full sm:w-auto rounded-lg bg-gray-50 shadow-sm px-3 py-3 sm:py-2 text-sm text-gray-700 focus:ring-2 focus:ring-indigo-500 focus:outline-none capitalize"
           >
             {CATEGORIES.map((c) => (
               <option key={c} value={c}>
@@ -115,7 +117,7 @@ function ProjectsContent() {
           <select
             value={sort}
             onChange={(e) => setSort(e.target.value as (typeof SORTS)[number])}
-            className="rounded-lg bg-gray-50 shadow-sm px-3 py-2 text-sm text-gray-700 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+            className="w-full sm:w-auto rounded-lg bg-gray-50 shadow-sm px-3 py-3 sm:py-2 text-sm text-gray-700 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
           >
             <option value="newest">Newest</option>
             <option value="trending">Trending</option>
@@ -126,13 +128,17 @@ function ProjectsContent() {
 
       {/* Results */}
       {loading ? (
-        <div className="text-center py-20 text-gray-400">Loading projects...</div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[...Array(6)].map((_, i) => (
+            <div key={i} className="animate-pulse rounded-xl bg-gray-100 h-72" />
+          ))}
+        </div>
       ) : filtered.length === 0 ? (
         <div className="text-center py-20">
           <p className="text-gray-500 text-lg">No projects found matching your criteria.</p>
           <button
             onClick={() => { setSearch(''); setCategory('all'); }}
-            className="mt-4 text-indigo-600 hover:underline text-sm"
+            className="mt-4 inline-flex items-center justify-center min-h-[44px] px-6 py-3 text-sm font-medium text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
           >
             Clear all filters
           </button>

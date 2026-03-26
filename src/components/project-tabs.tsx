@@ -153,7 +153,7 @@ export function ProjectTabs({ description, comments, projectId, faq = [], update
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`whitespace-nowrap px-5 py-3 text-sm font-medium border-b-2 transition-colors ${
+              className={`whitespace-nowrap flex-shrink-0 px-4 sm:px-5 min-h-[44px] py-3 text-sm font-medium border-b-2 transition-colors ${
                 activeTab === tab
                   ? 'border-indigo-600 text-indigo-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
@@ -172,7 +172,7 @@ export function ProjectTabs({ description, comments, projectId, faq = [], update
       </div>
 
       {/* Tab content */}
-      <div className="rounded-xl bg-white p-6 shadow-md">
+      <div className="rounded-xl bg-white p-4 sm:p-6 shadow-md">
         {activeTab === 'About this Project' && (
           <div className="max-h-[600px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent pr-2">
             <MarkdownRenderer content={description} />
@@ -216,9 +216,9 @@ export function ProjectTabs({ description, comments, projectId, faq = [], update
                   <div key={index}>
                     <button
                       onClick={() => toggleFaq(index)}
-                      className="w-full flex items-center justify-between py-4 text-left hover:bg-gray-50 transition-colors rounded-lg px-2 -mx-2"
+                      className="w-full flex items-center justify-between min-h-[48px] py-3 sm:py-4 text-left hover:bg-gray-50 transition-colors rounded-lg px-2 -mx-2"
                     >
-                      <span className="font-semibold text-gray-900 pr-4">{item.question}</span>
+                      <span className="font-semibold text-gray-900 pr-4 break-words">{item.question}</span>
                       {expandedFaq.has(index) ? (
                         <ChevronDown className="h-5 w-5 text-gray-400 shrink-0" />
                       ) : (
@@ -226,8 +226,8 @@ export function ProjectTabs({ description, comments, projectId, faq = [], update
                       )}
                     </button>
                     {expandedFaq.has(index) && (
-                      <div className="pb-4 px-2 -mt-1">
-                        <p className="text-sm text-gray-500 leading-relaxed">{item.answer}</p>
+                      <div className="pb-4 px-2 sm:px-3 -mt-1">
+                        <p className="text-sm text-gray-500 leading-relaxed break-words">{item.answer}</p>
                       </div>
                     )}
                   </div>
@@ -246,23 +246,23 @@ export function ProjectTabs({ description, comments, projectId, faq = [], update
                 <p className="text-sm text-gray-500">No updates yet. Check back later for progress reports.</p>
               </div>
             ) : (
-              <div className="relative pl-8">
+              <div className="relative pl-6 sm:pl-8">
                 {/* Vertical timeline line */}
-                <div className="absolute left-3 top-2 bottom-2 w-0.5 bg-gray-200" />
-                <div className="space-y-6">
+                <div className="absolute left-[9px] sm:left-3 top-2 bottom-2 w-0.5 bg-gray-200" />
+                <div className="space-y-4 sm:space-y-6">
                   {updates.map((update) => (
                     <div key={update.id} className="relative">
                       {/* Timeline dot */}
-                      <div className="absolute -left-5 top-1.5 h-3 w-3 rounded-full bg-indigo-500 ring-4 ring-white" />
-                      <div className="rounded-lg border border-gray-100 bg-gray-50 p-4">
-                        <div className="flex items-center gap-2 mb-2">
+                      <div className="absolute -left-[15px] sm:-left-5 top-1.5 h-3 w-3 rounded-full bg-indigo-500 ring-4 ring-white" />
+                      <div className="rounded-lg border border-gray-100 bg-gray-50 p-3 sm:p-4">
+                        <div className="flex flex-wrap items-center gap-1 sm:gap-2 mb-2">
                           <span className="text-xs font-medium text-indigo-600">{update.agentName}</span>
                           <span className="text-xs text-gray-400">·</span>
                           <span className="text-xs text-gray-400" title={new Date(update.createdAt).toLocaleString()}>
                             {timeAgo(update.createdAt)}
                           </span>
                         </div>
-                        <p className="text-sm text-gray-700 leading-relaxed">{update.content}</p>
+                        <p className="text-sm text-gray-700 leading-relaxed break-words">{update.content}</p>
                       </div>
                     </div>
                   ))}
@@ -281,9 +281,9 @@ export function ProjectTabs({ description, comments, projectId, faq = [], update
             {commentList.length === 0 ? (
               <p className="text-sm text-gray-500 text-center py-8">No comments yet. Be the first!</p>
             ) : (
-              <div className="space-y-6">
+              <div className="space-y-4 sm:space-y-6">
                 {commentList.map((comment) => (
-                  <div key={comment.id} className="flex gap-3">
+                  <div key={comment.id} className="flex gap-2 sm:gap-3">
                     <div
                       className={`h-8 w-8 rounded-full flex items-center justify-center shrink-0 overflow-hidden ${
                         comment.authorType === 'owner' ? 'bg-amber-50' : comment.authorType === 'agent' ? 'bg-indigo-50' : 'bg-blue-50'
@@ -298,8 +298,8 @@ export function ProjectTabs({ description, comments, projectId, faq = [], update
                       )}
                     </div>
                     <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm font-medium text-gray-900">{comment.author}</span>
+                      <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 min-w-0">
+                        <span className="text-sm font-medium text-gray-900 truncate max-w-[120px] sm:max-w-none">{comment.author}</span>
                         <span className="text-xs text-gray-400">
                           {new Date(comment.createdAt).toLocaleDateString()}
                         </span>
@@ -319,7 +319,7 @@ export function ProjectTabs({ description, comments, projectId, faq = [], update
                           </span>
                         )}
                       </div>
-                      <p className="text-sm text-gray-600 mt-1">{comment.content}</p>
+                      <p className="text-sm text-gray-600 mt-1 break-words">{comment.content}</p>
                     </div>
                   </div>
                 ))}

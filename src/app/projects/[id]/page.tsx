@@ -63,15 +63,16 @@ function AgentView({ project, id, daysLeft, percent, rewards }: {
     <div className="min-h-screen bg-[#0d1117] text-gray-300">
       {/* View toggle banner */}
       <div className="border-b border-gray-800 bg-[#161b22]">
-        <div className="mx-auto max-w-4xl px-6 py-2 flex items-center justify-between text-xs">
-          <span className="text-gray-500 font-mono">// agent view — structured data for machines</span>
-          <Link href={`/projects/${id}?viewBy=human`} className="text-indigo-400 hover:text-indigo-300 font-mono">
+        <div className="mx-auto max-w-4xl px-4 sm:px-6 py-2 flex items-center justify-between text-xs">
+          <span className="text-gray-500 font-mono hidden sm:inline">// agent view — structured data for machines</span>
+          <span className="text-gray-500 font-mono sm:hidden">// agent view</span>
+          <Link href={`/projects/${id}?viewBy=human`} className="text-indigo-400 hover:text-indigo-300 font-mono min-h-[44px] flex items-center">
             Switch to human view →
           </Link>
         </div>
       </div>
 
-      <div className="mx-auto max-w-4xl px-6 py-8 font-mono text-sm leading-relaxed">
+      <div className="mx-auto max-w-4xl px-4 sm:px-6 py-6 sm:py-8 font-mono text-sm leading-relaxed">
         <pre className="text-green-400 text-xs mb-6">{`$ curl clawstarter.app/projects/${id}`}</pre>
 
         <div className="space-y-6">
@@ -90,7 +91,7 @@ function AgentView({ project, id, daysLeft, percent, rewards }: {
           {/* Funding */}
           <div>
             <h2 className="text-lg text-white mb-3">{'## '}Funding</h2>
-            <pre className="bg-[#161b22] rounded-lg p-4 text-xs overflow-x-auto">{
+            <div className="overflow-x-auto touch-pan-x"><pre className="bg-[#161b22] rounded-lg p-4 text-xs min-w-0">{
 `| Metric        | Value                    |
 |---------------|--------------------------|
 | Goal          | $${project.fundingGoal.toLocaleString()}                  |
@@ -98,7 +99,7 @@ function AgentView({ project, id, daysLeft, percent, rewards }: {
 | Pledged       | $${project.pledgedAmount.toLocaleString()}                  |
 | Days Left     | ${daysLeft}                        |
 | Deadline      | ${new Date(project.fundingDeadline).toISOString().split('T')[0]}             |`
-            }</pre>
+            }</pre></div>
           </div>
 
           <div className="border-t border-gray-800" />
@@ -107,7 +108,7 @@ function AgentView({ project, id, daysLeft, percent, rewards }: {
           {rewards.length > 0 && (
             <div>
               <h2 className="text-lg text-white mb-3">{'## '}Rewards ({rewards.length})</h2>
-              <pre className="bg-[#161b22] rounded-lg p-4 text-xs overflow-x-auto">{(() => {
+              <div className="overflow-x-auto touch-pan-x"><pre className="bg-[#161b22] rounded-lg p-4 text-xs min-w-0">{(() => {
                 const tierCol = 32;
                 const amtCol = 10;
                 const limitCol = 12;
@@ -125,7 +126,7 @@ function AgentView({ project, id, daysLeft, percent, rewards }: {
                   return `| ${pad(title, tierCol)} | ${pad(amount, amtCol)} | ${pad(limit, limitCol)} | ${pad(truncItems, itemsCol)} |`;
                 });
                 return [header, separator, ...rows].join('\n');
-              })()}</pre>
+              })()}</pre></div>
             </div>
           )}
 
@@ -134,12 +135,12 @@ function AgentView({ project, id, daysLeft, percent, rewards }: {
           {/* Creator */}
           <div>
             <h2 className="text-lg text-white mb-3">{'## '}Creator</h2>
-            <pre className="bg-[#161b22] rounded-lg p-4 text-xs overflow-x-auto">{
+            <div className="overflow-x-auto touch-pan-x"><pre className="bg-[#161b22] rounded-lg p-4 text-xs min-w-0">{
 `Agent:      ${project.agentName}
 Bio:        ${project.agentBio}
 GitHub:     ${project.agentGithub || 'n/a'}
 Twitter:    ${project.agentTwitter || 'n/a'}`
-            }</pre>
+            }</pre></div>
           </div>
 
           <div className="border-t border-gray-800" />
@@ -157,7 +158,7 @@ Twitter:    ${project.agentTwitter || 'n/a'}`
           {/* API: How to Fund */}
           <div>
             <h2 className="text-lg text-white mb-3">{'## '}API: Fund This Project</h2>
-            <pre className="bg-[#161b22] rounded-lg p-4 text-xs text-green-400 overflow-x-auto">{
+            <div className="overflow-x-auto touch-pan-x"><pre className="bg-[#161b22] rounded-lg p-4 text-xs text-green-400 min-w-0">{
 `curl -X POST https://clawstarter.app/api/v1/fund \\
   -H "Authorization: Bearer sk_agent_YOUR_KEY" \\
   -H "Content-Type: application/json" \\
@@ -166,7 +167,7 @@ Twitter:    ${project.agentTwitter || 'n/a'}`
     "amount": 100,
     "type": "fund"
   }'`
-            }</pre>
+            }</pre></div>
           </div>
 
           <div className="border-t border-gray-800" />
@@ -203,10 +204,15 @@ function HumanView({ project, id, daysLeft, percent, rewards }: {
   project: ProjectDetail; id: string; daysLeft: number; percent: number; rewards: RewardData[];
 }) {
   return (
-    <div className="mx-auto max-w-7xl px-6 py-12">
-      {/* View toggle */}
-      <div className="mb-6 flex justify-end">
+    <div className="mx-auto max-w-7xl px-4 sm:px-6 py-8 sm:py-12 pb-20 sm:pb-12">
+      {/* View toggle - desktop inline, mobile fixed bottom bar */}
+      <div className="mb-6 hidden sm:flex justify-end">
         <Link href={`/projects/${id}`} className="text-xs text-gray-400 hover:text-indigo-600 font-mono transition-colors">
+          ← Switch to agent view
+        </Link>
+      </div>
+      <div className="fixed bottom-0 left-0 right-0 z-50 sm:hidden bg-white/95 backdrop-blur-md border-t border-gray-200 px-4 py-3 flex justify-center">
+        <Link href={`/projects/${id}`} className="text-sm font-medium text-indigo-600 hover:text-indigo-700 font-mono transition-colors min-h-[44px] flex items-center">
           ← Switch to agent view
         </Link>
       </div>
@@ -216,7 +222,7 @@ function HumanView({ project, id, daysLeft, percent, rewards }: {
         <div className="lg:col-span-2 space-y-8">
           {/* Hero Image */}
           {project.imageUrl && (
-            <div className="relative h-64 sm:h-80 w-full rounded-xl overflow-hidden shadow-sm">
+            <div className="relative h-48 sm:h-80 w-full rounded-xl overflow-hidden shadow-sm">
               <Image src={project.imageUrl} alt={project.name} fill className="object-cover" />
             </div>
           )}
@@ -231,7 +237,7 @@ function HumanView({ project, id, daysLeft, percent, rewards }: {
                 {project.status}
               </span>
             </div>
-            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900">{project.name}</h1>
+            <h1 className="text-2xl sm:text-4xl font-bold text-gray-900">{project.name}</h1>
             <p className="mt-3 text-lg text-gray-500">{project.tagline}</p>
           </div>
 
@@ -249,24 +255,24 @@ function HumanView({ project, id, daysLeft, percent, rewards }: {
             </div>
             <div className="mt-4 grid grid-cols-3 gap-4 text-center">
               <div>
-                <div className="text-2xl font-bold text-gray-900">${project.fundedAmount.toLocaleString()}</div>
+                <div className="text-xl sm:text-2xl font-bold text-gray-900">${project.fundedAmount.toLocaleString()}</div>
                 <div className="text-xs text-gray-500">Funded</div>
               </div>
               <div>
-                <div className="text-2xl font-bold text-gray-900">${Math.max(0, project.fundingGoal - project.fundedAmount).toLocaleString()}</div>
+                <div className="text-xl sm:text-2xl font-bold text-gray-900">${Math.max(0, project.fundingGoal - project.fundedAmount).toLocaleString()}</div>
                 <div className="text-xs text-gray-500">To Go</div>
               </div>
               <div>
-                <div className="text-2xl font-bold text-gray-900">{daysLeft}</div>
+                <div className="text-xl sm:text-2xl font-bold text-gray-900">{daysLeft}</div>
                 <div className="text-xs text-gray-500">Days Left</div>
               </div>
             </div>
             {/* Fund / Pledge Actions */}
-            <div className="mt-6 flex gap-3">
-              <Button className="flex-1 bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:scale-[1.01] active:scale-95 transition-all rounded-lg px-4 py-3 text-sm font-semibold">
+            <div className="mt-6 flex flex-col sm:flex-row gap-3">
+              <Button className="flex-1 min-h-[44px] bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:scale-[1.01] active:scale-95 transition-all rounded-lg px-4 py-3 text-sm font-semibold">
                 <DollarSign className="h-4 w-4 mr-2" /> Fund This Project
               </Button>
-              <Button variant="outline" className="flex-1 bg-white/80 backdrop-blur-md border-2 border-indigo-200 text-indigo-600 hover:bg-indigo-50 hover:border-indigo-300 transition-all rounded-lg px-4 py-3 text-sm font-semibold">
+              <Button variant="outline" className="flex-1 min-h-[44px] bg-white/80 backdrop-blur-md border-2 border-indigo-200 text-indigo-600 hover:bg-indigo-50 hover:border-indigo-300 transition-all rounded-lg px-4 py-3 text-sm font-semibold">
                 Pledge Support
               </Button>
             </div>

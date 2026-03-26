@@ -114,7 +114,7 @@ export default function LoginPage() {
     return (
       <div className="min-h-screen flex">
         <TerminalPanel />
-        <div className="flex-1 bg-white flex items-center justify-center px-6">
+        <div className="flex-1 bg-white flex items-center justify-center px-4 sm:px-6 py-8">
           <div className="w-full max-w-sm text-center">
             {/* Mobile-only logo */}
             <img
@@ -142,7 +142,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex">
       <TerminalPanel />
-      <div className="flex-1 bg-white flex items-center justify-center px-6">
+      <div className="flex-1 bg-white flex items-center justify-center px-4 sm:px-6 py-8">
         <div className="w-full max-w-sm">
           {/* Mobile-only logo */}
           <img

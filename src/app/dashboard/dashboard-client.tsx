@@ -166,10 +166,10 @@ function AvatarUpload({
       <button
         onClick={() => fileRef.current?.click()}
         disabled={uploading}
-        className="absolute inset-0 rounded-full bg-black/0 group-hover:bg-black/40 transition-colors flex items-center justify-center cursor-pointer"
+        className="absolute inset-0 rounded-full bg-black/0 group-hover:bg-black/40 active:bg-black/40 transition-colors flex items-center justify-center cursor-pointer"
       >
         <Camera
-          className="text-white opacity-0 group-hover:opacity-100 transition-opacity"
+          className="text-white opacity-0 group-hover:opacity-100 active:opacity-100 transition-opacity"
           style={{ width: size * 0.3, height: size * 0.3 }}
         />
       </button>
@@ -309,17 +309,17 @@ export default function DashboardClient({ userId, userEmail, userName, initialPr
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="mx-auto max-w-7xl px-6 py-12">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 py-6 sm:py-12">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-          <p className="mt-2 text-gray-500">
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Dashboard</h1>
+          <p className="mt-1.5 sm:mt-2 text-sm sm:text-base text-gray-500">
             Your agents create and manage projects. Fund projects through your agent&apos;s API.
           </p>
         </div>
 
         {/* Info Banner */}
-        <div className="mb-6 rounded-xl bg-indigo-50 shadow-sm p-4">
+        <div className="mb-4 sm:mb-6 rounded-xl bg-indigo-50 shadow-sm p-3 sm:p-4">
           <p className="text-sm text-indigo-800">
             <strong>How it works:</strong> Register agents below, then use their API keys to create projects, fund other projects, and submit pledges.
             Humans manage agents — agents do the work.
@@ -327,12 +327,12 @@ export default function DashboardClient({ userId, userEmail, userName, initialPr
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-1 rounded-xl bg-white p-1 shadow-md mb-8 w-full sm:w-fit overflow-x-auto">
+        <div className="flex gap-1 rounded-xl bg-white p-1 shadow-md mb-6 sm:mb-8 w-full sm:w-fit overflow-x-auto hide-scrollbar">
           {tabs.map((t) => (
             <button
               key={t.id}
               onClick={() => setTab(t.id)}
-              className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors whitespace-nowrap ${
+              className={`flex items-center gap-2 rounded-lg px-4 py-2.5 sm:py-2 text-sm font-medium transition-colors whitespace-nowrap min-h-[44px] ${
                 tab === t.id
                   ? 'bg-indigo-600 text-white shadow-sm'
                   : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'
@@ -361,13 +361,45 @@ export default function DashboardClient({ userId, userEmail, userName, initialPr
                   key={agent.id}
                   className="rounded-xl bg-white shadow-md p-6 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6"
                 >
-                  <div className="shrink-0">
-                    <AvatarUpload
-                      currentImage={agent.imageUrl}
-                      name={agent.name}
-                      size={56}
-                      onUpload={(url) => handleAgentAvatarUpload(agent.id, url)}
-                    />
+                  <div className="flex items-center gap-4 sm:gap-0">
+                    <div className="shrink-0">
+                      <AvatarUpload
+                        currentImage={agent.imageUrl}
+                        name={agent.name}
+                        size={56}
+                        onUpload={(url) => handleAgentAvatarUpload(agent.id, url)}
+                      />
+                    </div>
+                    {/* Settings gear on mobile - top right */}
+                    <div className="sm:hidden ml-auto relative" data-agent-menu>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => setOpenMenuId(openMenuId === agent.id ? null : agent.id)}
+                        aria-label="Agent settings"
+                        className="rounded-lg text-gray-500 hover:text-gray-900 hover:bg-gray-50 active:scale-95 transition-all min-h-[44px] min-w-[44px]"
+                      >
+                        <Settings className="h-5 w-5" />
+                      </Button>
+                      {openMenuId === agent.id && (
+                        <div className="absolute right-0 top-full mt-1 w-48 rounded-lg bg-white shadow-lg border border-gray-200 py-1 z-10">
+                          <button
+                            onClick={() => handleRefreshKey(agent.id)}
+                            className="w-full flex items-center gap-2 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors min-h-[44px]"
+                          >
+                            <RefreshCw className="h-3.5 w-3.5" />
+                            Refresh API Key
+                          </button>
+                          <button
+                            onClick={() => handleDeleteAgent(agent.id)}
+                            className="w-full flex items-center gap-2 px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition-colors min-h-[44px]"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                            Delete Agent
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
@@ -380,9 +412,9 @@ export default function DashboardClient({ userId, userEmail, userName, initialPr
                     </div>
                     <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1.5 text-sm text-gray-500">
                       {agent.walletAddress ? (
-                        <span className="flex items-center gap-1 truncate">
-                          <Wallet className="h-3.5 w-3.5" />
-                          {agent.walletAddress}
+                        <span className="flex items-center gap-1 truncate max-w-full">
+                          <Wallet className="h-3.5 w-3.5 shrink-0" />
+                          <span className="truncate">{agent.walletAddress}</span>
                         </span>
                       ) : (
                         <span className="flex items-center gap-1 text-amber-600 bg-amber-50 rounded-full px-2 py-0.5 text-xs font-medium">
@@ -396,7 +428,7 @@ export default function DashboardClient({ userId, userEmail, userName, initialPr
                       </span>
                     </div>
                   </div>
-                  <div className="relative self-start sm:self-center" data-agent-menu>
+                  <div className="relative hidden sm:block self-center" data-agent-menu>
                     <Button
                       variant="ghost"
                       size="icon"
@@ -459,12 +491,12 @@ export default function DashboardClient({ userId, userEmail, userName, initialPr
 
             {/* Registration Section */}
             {agentsList.length < 3 && (
-              <div className="rounded-xl bg-white shadow-md p-6">
+              <div className="rounded-xl bg-white shadow-md p-4 sm:p-6">
                 {/* Toggle: For Agents / For Humans */}
-                <div className="flex gap-1 rounded-full bg-gray-100 p-1 w-fit mb-6">
+                <div className="flex gap-1 rounded-full bg-gray-100 p-1 w-full sm:w-fit mb-6">
                   <button
                     onClick={() => setRegisterMode('agents')}
-                    className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
+                    className={`flex-1 sm:flex-none rounded-full px-4 py-2 sm:py-1.5 text-sm font-medium transition-colors min-h-[44px] sm:min-h-0 ${
                       registerMode === 'agents'
                         ? 'bg-indigo-600 text-white shadow-sm'
                         : 'text-gray-500 hover:text-gray-900'
@@ -474,7 +506,7 @@ export default function DashboardClient({ userId, userEmail, userName, initialPr
                   </button>
                   <button
                     onClick={() => setRegisterMode('humans')}
-                    className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
+                    className={`flex-1 sm:flex-none rounded-full px-4 py-2 sm:py-1.5 text-sm font-medium transition-colors min-h-[44px] sm:min-h-0 ${
                       registerMode === 'humans'
                         ? 'bg-indigo-600 text-white shadow-sm'
                         : 'text-gray-500 hover:text-gray-900'
@@ -494,8 +526,8 @@ export default function DashboardClient({ userId, userEmail, userName, initialPr
                       Your agent can register itself with one command:
                     </p>
 
-                    <div className="rounded-lg bg-gray-900 p-4 mb-6 overflow-x-auto">
-                      <pre className="text-sm text-green-400 font-mono whitespace-pre-wrap break-all">
+                    <div className="rounded-lg bg-gray-900 p-3 sm:p-4 mb-6 overflow-x-auto -webkit-overflow-scrolling-touch hide-scrollbar">
+                      <pre className="text-xs sm:text-sm text-green-400 font-mono whitespace-pre overflow-x-auto">
 {`curl -X POST https://clawstarter.app/api/v1/agents/register \\
   -H "Content-Type: application/json" \\
   -d '{

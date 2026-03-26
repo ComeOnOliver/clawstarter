@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useSession, signOut } from 'next-auth/react';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, X, Menu, Compass } from 'lucide-react';
 import { SearchBar } from '@/components/search-bar';
 import { Button } from '@/components/ui/button';
 import {
@@ -32,6 +32,16 @@ export function Navbar() {
       })
       .catch(() => {});
   }, [session?.user?.id]);
+
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [open]);
 
   const initials = (session?.user?.name || '?')
     .split(/\s+/)
@@ -93,57 +103,119 @@ export function Navbar() {
         {/* Mobile hamburger */}
         <button
           onClick={() => setOpen(!open)}
-          className="md:hidden min-h-[44px] min-w-[44px] flex items-center justify-center flex-shrink-0"
+          className="md:hidden min-h-[48px] min-w-[48px] flex items-center justify-center flex-shrink-0"
           aria-label="Toggle menu"
         >
-          <svg className="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            {open ? (
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            ) : (
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            )}
-          </svg>
+          {open ? (
+            <X className="h-6 w-6 text-gray-600" />
+          ) : (
+            <Menu className="h-6 w-6 text-gray-600" />
+          )}
         </button>
       </div>
 
-      {/* Mobile menu */}
-      {open && (
-        <div className="md:hidden bg-white shadow-inner px-6 py-4 space-y-4">
-          {session ? (
-            <>
+      {/* Mobile full-screen overlay menu */}
+      <div
+        className={`md:hidden fixed inset-0 top-[72px] z-50 transition-all duration-300 ease-in-out ${
+          open
+            ? 'opacity-100 pointer-events-auto'
+            : 'opacity-0 pointer-events-none'
+        }`}
+      >
+        {/* Backdrop */}
+        <div
+          className="absolute inset-0 bg-black/20"
+          onClick={() => setOpen(false)}
+        />
+
+        {/* Slide-in panel */}
+        <div
+          className={`absolute inset-y-0 right-0 w-full bg-white shadow-xl flex flex-col transition-transform duration-300 ease-in-out ${
+            open ? 'translate-x-0' : 'translate-x-full'
+          }`}
+        >
+          {/* Close button at top */}
+          <div className="flex justify-end px-6 pt-4">
+            <button
+              onClick={() => setOpen(false)}
+              className="min-h-[48px] min-w-[48px] flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors"
+              aria-label="Close menu"
+            >
+              <X className="h-6 w-6 text-gray-600" />
+            </button>
+          </div>
+
+          {/* User info at top when logged in */}
+          {session && (
+            <div className="px-6 pb-4 border-b border-gray-100">
+              <div className="flex items-center gap-3">
+                <Avatar className="h-12 w-12">
+                  <AvatarImage src={userImage || session.user?.image || undefined} />
+                  <AvatarFallback className="text-sm bg-indigo-50 text-indigo-600">{initials}</AvatarFallback>
+                </Avatar>
+                <div>
+                  <p className="font-semibold text-gray-900">{session.user?.name || 'User'}</p>
+                  <p className="text-sm text-gray-500">{session.user?.email}</p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Menu items */}
+          <div className="flex-1 px-6 py-4 space-y-2">
+            {session ? (
               <Link
                 href="/dashboard"
                 onClick={() => setOpen(false)}
-                className="block text-center min-h-[44px]"
+                className="flex items-center gap-3 min-h-[48px] px-4 py-3 rounded-xl text-gray-900 font-medium hover:bg-gray-50 active:bg-gray-100 transition-colors"
               >
-                <Button className="w-full bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 active:scale-95 transition-all rounded-lg px-4 py-2 text-sm font-medium">
-                  <Avatar className="h-5 w-5 mr-2">
-                    <AvatarImage src={userImage || session.user?.image || undefined} />
-                    <AvatarFallback className="text-[9px] bg-indigo-50 text-indigo-600">{initials}</AvatarFallback>
-                  </Avatar>
-                  Dashboard
-                </Button>
+                <ArrowRight className="h-5 w-5 text-indigo-600" />
+                Dashboard
               </Link>
+            ) : (
+              <Link
+                href="/login"
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-3 min-h-[48px] px-4 py-3 rounded-xl text-gray-900 font-medium hover:bg-gray-50 active:bg-gray-100 transition-colors"
+              >
+                <ArrowRight className="h-5 w-5 text-indigo-600" />
+                Get Started
+              </Link>
+            )}
+
+            <Link
+              href="/projects"
+              onClick={() => setOpen(false)}
+              className="flex items-center gap-3 min-h-[48px] px-4 py-3 rounded-xl text-gray-900 font-medium hover:bg-gray-50 active:bg-gray-100 transition-colors"
+            >
+              <Compass className="h-5 w-5 text-indigo-600" />
+              Explore
+            </Link>
+          </div>
+
+          {/* Bottom: CTA or Logout */}
+          <div className="px-6 pb-8 pt-4 border-t border-gray-100">
+            {session ? (
               <button
                 onClick={() => { setOpen(false); signOut({ callbackUrl: '/' }); }}
-                className="block w-full text-center text-sm text-gray-500 hover:text-gray-900 transition-colors min-h-[44px] flex items-center justify-center active:scale-95"
+                className="w-full min-h-[48px] flex items-center justify-center rounded-xl text-red-500 font-medium hover:bg-red-50 active:bg-red-100 transition-colors"
               >
                 Log out
               </button>
-            </>
-          ) : (
-            <Link
-              href="/login"
-              onClick={() => setOpen(false)}
-              className="block text-center min-h-[44px]"
-            >
-              <Button className="w-full bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 active:scale-95 transition-all rounded-lg px-4 py-2 text-sm font-medium group">
-                Get Started <ArrowRight className="h-4 w-4 ml-1 group-hover:translate-x-0.5 transition-transform" />
-              </Button>
-            </Link>
-          )}
+            ) : (
+              <Link
+                href="/login"
+                onClick={() => setOpen(false)}
+                className="block"
+              >
+                <Button className="w-full min-h-[48px] bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 active:scale-95 transition-all rounded-xl px-4 py-3 text-base font-medium group">
+                  Get Started <ArrowRight className="h-4 w-4 ml-1 group-hover:translate-x-0.5 transition-transform" />
+                </Button>
+              </Link>
+            )}
+          </div>
         </div>
-      )}
+      </div>
     </nav>
   );
 }
