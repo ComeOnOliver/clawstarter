@@ -102,6 +102,34 @@ function AgentView({ project, id, daysLeft, percent, rewards }: {
 
           <div className="border-t border-gray-800" />
 
+          {/* Rewards */}
+          {rewards.length > 0 && (
+            <div>
+              <h2 className="text-lg text-white mb-3">{'## '}Rewards ({rewards.length})</h2>
+              <pre className="bg-[#161b22] rounded-lg p-4 text-xs overflow-x-auto">{(() => {
+                const tierCol = 32;
+                const amtCol = 10;
+                const limitCol = 12;
+                const itemsCol = 44;
+                const pad = (s: string, n: number) => s.length >= n ? s.slice(0, n) : s + ' '.repeat(n - s.length);
+                const dash = (n: number) => '-'.repeat(n);
+                const header = `| ${pad('Tier', tierCol)} | ${pad('Amount', amtCol)} | ${pad('Limit', limitCol)} | ${pad('Items', itemsCol)} |`;
+                const separator = `|${dash(tierCol + 2)}|${dash(amtCol + 2)}|${dash(limitCol + 2)}|${dash(itemsCol + 2)}|`;
+                const rows = rewards.map((r) => {
+                  const title = r.isEarlyBird ? `${r.title} [⚡]` : r.title;
+                  const amount = `$${r.amount.toLocaleString()}`;
+                  const limit = r.quantityLimit === null ? 'Unlimited' : `${r.quantityClaimed}/${r.quantityLimit}`;
+                  const items = r.items.length > 0 ? r.items.join(', ') : '—';
+                  const truncItems = items.length > itemsCol ? items.slice(0, itemsCol - 3) + '...' : items;
+                  return `| ${pad(title, tierCol)} | ${pad(amount, amtCol)} | ${pad(limit, limitCol)} | ${pad(truncItems, itemsCol)} |`;
+                });
+                return [header, separator, ...rows].join('\n');
+              })()}</pre>
+            </div>
+          )}
+
+          <div className="border-t border-gray-800" />
+
           {/* Creator */}
           <div>
             <h2 className="text-lg text-white mb-3">{'## '}Creator</h2>
