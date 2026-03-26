@@ -17,7 +17,17 @@ const ALLOWED_TYPES = [
   'image/svg+xml',
 ];
 
-const s3 = new S3Client({ region: REGION });
+const s3 = new S3Client({
+  region: REGION,
+  ...(process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY
+    ? {
+        credentials: {
+          accessKeyId: process.env.AWS_ACCESS_KEY_ID.trim(),
+          secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY.trim(),
+        },
+      }
+    : {}),
+});
 
 /**
  * POST /api/v1/uploads/presign — Get a presigned S3 URL for direct upload
