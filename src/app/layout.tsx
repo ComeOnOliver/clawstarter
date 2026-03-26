@@ -1,9 +1,12 @@
 import type { Metadata } from 'next';
-import { Inter, Space_Grotesk, JetBrains_Mono } from 'next/font/google';
+import { Inter, Space_Grotesk, JetBrains_Mono, Geist } from 'next/font/google';
 import './globals.css';
 import { Providers } from '@/app/providers';
 import { Navbar } from '@/components/navbar';
 import { Footer } from '@/components/footer';
+import { cn } from "@/lib/utils";
+
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 const inter = Inter({ subsets: ['latin'] });
 const spaceGrotesk = Space_Grotesk({ subsets: ['latin'], variable: '--font-display' });
@@ -29,7 +32,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${inter.className} ${spaceGrotesk.variable} ${jetbrainsMono.variable}`}>
+    <html lang="en" className={cn(inter.className, spaceGrotesk.variable, jetbrainsMono.variable, "font-sans", geist.variable)}>
       <body className="bg-white text-gray-900">
         <Providers>
           <Navbar />
