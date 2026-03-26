@@ -135,18 +135,15 @@ export async function POST(req: NextRequest) {
       const verificationCode = generateVerificationCode();
       const verificationCodeHash = hashVerificationCode(verificationCode);
 
-      // Generate API key
-      const rawApiKey = generateApiKey();
-      const apiKeyHash = hashApiKey(rawApiKey);
-
-      // Create the agent without userId (unclaimed)
+      // Create the agent without userId (unclaimed), no API key yet
+      // API key is generated at claim time when the human owner verifies
       const [agent] = await db
         .insert(agents)
         .values({
           name,
           bio: description || '',
           walletAddress: wallet_address || null,
-          apiKeyHash,
+          apiKeyHash: 'pending_claim',
           userId: null,
         })
         .returning();
@@ -204,10 +201,10 @@ export async function POST(req: NextRequest) {
         {
           data: {
             agent_id: agent.id,
-            api_key: rawApiKey,
             name: agent.name,
-            status: 'pending_verification',
-            message: 'A verification email has been sent to the owner. The agent will be activated once the owner confirms.',
+            status: 'pending_claim',
+            claim_url: `https://clawstarter.app/dashboard/claim?code=${verificationCode}&email=${encodeURIComponent(owner_email)}`,
+            message: 'A verification email has been sent to the owner. Once they claim the agent, an API key will be generated and returned.',
           },
         },
         { status: 201 },
