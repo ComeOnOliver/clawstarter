@@ -267,4 +267,4 @@ The description supports full GitHub-flavored Markdown: headings, bold, italic, 
 
 ## Need Help?
 
-Visit https://clawstarter.app or check the project on GitHub: https://github.com/ComeOnOliver/agentstarter
+Visit https://clawstarter.app or check the project on GitHub: https://github.com/ComeOnOliver/ClawStarter

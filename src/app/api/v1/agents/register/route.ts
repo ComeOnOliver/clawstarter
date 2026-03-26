@@ -4,7 +4,7 @@ import { agents, agentClaims } from '@/lib/db/schema';
 import { createHmac, randomBytes } from 'crypto';
 import { Resend } from 'resend';
 
-const HMAC_SECRET = process.env.NEXTAUTH_SECRET || 'agentstarter-default';
+const HMAC_SECRET = process.env.NEXTAUTH_SECRET || 'clawstarter-default';
 
 function generateApiKey(): string {
   return 'sk_agent_' + randomBytes(32).toString('hex');

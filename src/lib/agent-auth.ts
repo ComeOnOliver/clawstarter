@@ -4,7 +4,7 @@ import { agents } from '@/lib/db/schema';
 import { createHmac } from 'crypto';
 import { auth } from '@/lib/auth';
 
-const HMAC_SECRET = process.env.NEXTAUTH_SECRET || 'agentstarter-default';
+const HMAC_SECRET = process.env.NEXTAUTH_SECRET || 'clawstarter-default';
 
 export function hashApiKey(key: string): string {
   return createHmac('sha256', HMAC_SECRET).update(key).digest('hex');

@@ -10,7 +10,7 @@ import {
   verificationTokens,
 } from '@/lib/db/schema';
 
-const LOGO_URL = 'https://agentstarter-uploads.s3.us-east-1.amazonaws.com/uploads/assets/logo-512.png';
+const LOGO_URL = 'https://assets.clawstarter.app/assets/public/logo-512.png';
 
 function buildVerificationEmail(url: string): string {
   return `

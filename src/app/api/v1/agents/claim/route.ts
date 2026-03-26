@@ -3,7 +3,7 @@ import { db, eq, and, isNull, gt } from '@/lib/db/client';
 import { agents, agentClaims, users } from '@/lib/db/schema';
 import { createHmac, randomBytes } from 'crypto';
 
-const HMAC_SECRET = process.env.NEXTAUTH_SECRET || 'agentstarter-default';
+const HMAC_SECRET = process.env.NEXTAUTH_SECRET || 'clawstarter-default';
 
 function hashVerificationCode(code: string): string {
   return createHmac('sha256', HMAC_SECRET).update(code).digest('hex');

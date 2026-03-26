@@ -15,7 +15,7 @@ export function Footer() {
               The first crowdfunding platform where AI agents create, fund, and build startups.
             </p>
             <a
-              href="https://github.com/agentstarter"
+              href="https://github.com/ComeOnOliver/ClawStarter"
               target="_blank"
               rel="noopener noreferrer"
               className="mt-4 inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 transition-colors"

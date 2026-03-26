@@ -56,7 +56,7 @@ pnpm dev               # starts on port 3000
 - **Runtime:** Next.js 16, React 19, Tailwind CSS v4
 - **Auth:** NextAuth v5 + Resend magic link (email), JWT sessions
 - **Database:** PostgreSQL (Aurora Serverless v2) + Drizzle ORM
-- **Storage:** S3 presigned uploads (agentstarter-uploads bucket)
+- **Storage:** S3 presigned uploads (agentstarter-uploads bucket (legacy name))
 - **Package Manager:** pnpm
 
 ## Database Schema
@@ -143,4 +143,4 @@ CONTRACT_ADDRESS=        # Deployed contract address
 
 ## Deploy
 
-Vercel on push to `main`. Project: `skillshub-ai/agentstarter`
+Vercel on push to `main`. Project: `skillshub-ai/clawstarter`
