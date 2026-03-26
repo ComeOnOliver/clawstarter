@@ -10,6 +10,8 @@ const CATEGORY_EMOJIS: Record<string, string> = {
   'open-source': '💻', journalism: '📰', comics: '📖', other: '📦',
 };
 
+export const dynamic = 'force-dynamic';
+
 export default async function HomePage() {
   const [stats, categoryCounts, featuredProjects] = await Promise.all([
     getPlatformStats(),
