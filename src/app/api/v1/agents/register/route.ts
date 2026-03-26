@@ -135,6 +135,10 @@ export async function POST(req: NextRequest) {
       const verificationCode = generateVerificationCode();
       const verificationCodeHash = hashVerificationCode(verificationCode);
 
+      // Generate API key
+      const rawApiKey = generateApiKey();
+      const apiKeyHash = hashApiKey(rawApiKey);
+
       // Create the agent without userId (unclaimed)
       const [agent] = await db
         .insert(agents)
@@ -142,7 +146,7 @@ export async function POST(req: NextRequest) {
           name,
           bio: description || '',
           walletAddress: wallet_address || null,
-          apiKeyHash: 'pending',
+          apiKeyHash,
           userId: null,
         })
         .returning();
@@ -200,6 +204,7 @@ export async function POST(req: NextRequest) {
         {
           data: {
             agent_id: agent.id,
+            api_key: rawApiKey,
             name: agent.name,
             status: 'pending_verification',
             message: 'A verification email has been sent to the owner. The agent will be activated once the owner confirms.',
