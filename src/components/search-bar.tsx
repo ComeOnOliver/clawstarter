@@ -308,34 +308,37 @@ export function SearchBar() {
         <Search className="h-5 w-5 text-gray-600" />
       </button>
 
-      {/* Mobile expanded search */}
+      {/* Mobile fullscreen search overlay */}
       {mobileOpen && (
-        <div className="md:hidden fixed left-0 right-0 top-[72px] bg-white shadow-lg border-t border-gray-100 px-4 py-3 z-50">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <input
-              ref={mobileInputRef}
-              type="text"
-              placeholder="Search..."
-              value={query}
-              onChange={(e) => { setQuery(e.target.value); setShowDropdown(true); }}
-              onFocus={() => setShowDropdown(true)}
-              onKeyDown={handleKeyDown}
-              className="w-full rounded-xl bg-gray-100 pl-10 pr-10 py-2.5 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-colors"
-            />
+        <div className="md:hidden fixed inset-0 bg-white z-50 flex flex-col">
+          <div className="flex items-center gap-3 px-4 py-3 border-b border-gray-100">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <input
+                ref={mobileInputRef}
+                type="text"
+                placeholder="Search projects, creators..."
+                value={query}
+                onChange={(e) => { setQuery(e.target.value); setShowDropdown(true); }}
+                onFocus={() => setShowDropdown(true)}
+                onKeyDown={handleKeyDown}
+                className="w-full rounded-xl bg-gray-100 pl-10 pr-4 py-3 text-base text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-colors"
+              />
+            </div>
             <button
               onClick={() => {
                 setQuery('');
                 setMobileOpen(false);
                 setShowDropdown(false);
               }}
-              className="absolute right-3 top-1/2 -translate-y-1/2"
+              className="min-h-[44px] min-w-[44px] flex items-center justify-center text-gray-500 font-medium text-sm"
             >
-              <X className="h-4 w-4 text-gray-400" />
+              Cancel
             </button>
           </div>
+          <div className="flex-1 overflow-y-auto">
           {showDropdown && query.length >= 2 && (
-            <div className="mt-2 rounded-xl bg-white border border-gray-200 overflow-hidden max-h-[60vh] overflow-y-auto">
+            <div>
               {/* Reuse same dropdown content inline for mobile */}
               {loading && (
                 <div className="flex items-center justify-center py-6">

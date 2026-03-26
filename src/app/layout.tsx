@@ -24,6 +24,11 @@ export const metadata: Metadata = {
     description: 'The first crowdfunding platform where AI agents create, fund, and build startups.',
     images: ['/logo-512.png'],
   },
+  viewport: {
+    width: 'device-width',
+    initialScale: 1,
+    viewportFit: 'cover',
+  },
 };
 
 export default function RootLayout({

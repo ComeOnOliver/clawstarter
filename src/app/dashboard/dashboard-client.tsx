@@ -683,24 +683,24 @@ export default function DashboardClient({ userId, userEmail, userName, initialPr
 
         {/* ─── Profile Tab ─── */}
         {tab === 'profile' && (
-          <div className="max-w-2xl space-y-6">
+          <div className="max-w-2xl space-y-4 sm:space-y-6">
             <h2 className="text-xl font-semibold text-gray-900">Edit Profile</h2>
 
             {/* Profile Picture */}
-            <div className="rounded-xl bg-white shadow-md p-6">
+            <div className="rounded-xl bg-white shadow-md p-4 sm:p-6">
               <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4">
                 Profile Picture
               </h3>
-              <div className="flex items-center gap-6">
+              <div className="flex flex-col items-center sm:flex-row sm:items-center gap-4 sm:gap-6">
                 <AvatarUpload
                   currentImage={profileImage || null}
                   name={displayName || userEmail}
                   size={96}
                   onUpload={handleProfileImageUpload}
                 />
-                <div>
+                <div className="text-center sm:text-left">
                   <p className="text-sm text-gray-600">
-                    Click on the avatar to upload a new photo.
+                    Tap the avatar to upload a new photo.
                   </p>
                   <p className="text-xs text-gray-400 mt-1">
                     JPG, PNG, WebP or GIF. Max 5MB.
@@ -710,7 +710,7 @@ export default function DashboardClient({ userId, userEmail, userName, initialPr
             </div>
 
             {/* Account Info */}
-            <div className="rounded-xl bg-white shadow-md p-6 space-y-4">
+            <div className="rounded-xl bg-white shadow-md p-4 sm:p-6 space-y-4">
               <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider">
                 Account
               </h3>
@@ -721,7 +721,7 @@ export default function DashboardClient({ userId, userEmail, userName, initialPr
                 <input
                   defaultValue={userEmail}
                   disabled
-                  className="w-full rounded-lg bg-gray-50 shadow-sm px-4 py-2.5 text-sm text-gray-500 cursor-not-allowed"
+                  className="w-full rounded-lg bg-gray-50 shadow-sm px-4 py-2.5 text-sm text-gray-500 cursor-not-allowed min-h-[44px]"
                 />
               </div>
               <div>
@@ -731,7 +731,7 @@ export default function DashboardClient({ userId, userEmail, userName, initialPr
                 <input
                   value={displayName}
                   onChange={(e) => setDisplayName(e.target.value)}
-                  className="w-full rounded-lg bg-gray-50 shadow-sm px-4 py-2.5 text-sm text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:outline-none transition-colors"
+                  className="w-full rounded-lg bg-gray-50 shadow-sm px-4 py-2.5 text-sm text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:outline-none transition-colors min-h-[44px]"
                 />
               </div>
             </div>
